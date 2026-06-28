@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sealer Zone — Contractor Supply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+  body { background: var(--white); }
+
+  /* top nav */
+  .nav {
+    position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92);
+    backdrop-filter: saturate(140%) blur(8px); border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: .8rem 1.4rem; display: flex; align-items: center; gap: 1.3rem; }
+  .logo { display: flex; align-items: center; gap: .6rem; }
+  .logo .mark { width: 32px; height: 32px; border-radius: 8px; background: var(--ink); color: #fff;
+    display: grid; place-items: center; font-family: var(--font-display); font-weight: 700;
+    font-size: .82rem; line-height: 1; letter-spacing: -.02em; white-space: nowrap; }
+  .logo .mark b { color: var(--teal); }
+  .logo .name { font-family: var(--font-display); font-weight: 600; letter-spacing: -.01em; font-size: 1.02rem; }
+  .nav-links { display: flex; gap: 1.1rem; margin-left: .5rem; }
+  .nav-links a { font-size: .9rem; font-weight: 500; color: var(--slate-700); }
+  .nav-links a:hover { color: var(--teal-dark); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: .7rem; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .lang button { background: #fff; border: none; padding: .32rem .7rem; font-size: .78rem; font-weight: 700; color: var(--slate-500); }
+  .lang button.on { background: var(--ink); color: #fff; }
+  .acct-chip { display: flex; align-items: center; gap: .5rem; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; padding: .28rem .3rem .28rem .7rem; font-size: .8rem; }
+  .acct-chip .tierdot { width: 8px; height: 8px; border-radius: 50%; background: #EAB308; box-shadow: 0 0 0 3px #FEF9C3; }
+  .acct-chip .av { width: 26px; height: 26px; border-radius: 50%; background: var(--teal-dark); color: #fff; display: grid; place-items: center; font-size: .72rem; font-weight: 700; }
+  .cart-btn { position: relative; }
+  .cart-btn .count { position: absolute; top: -7px; right: -7px; background: var(--teal); color: #fff;
+    font-size: .68rem; font-weight: 700; min-width: 18px; height: 18px; border-radius: 999px; display: grid; place-items: center; padding: 0 4px; }
+
+  /* hero */
+  .hero { max-width: 1200px; margin: 0 auto; padding: 2.6rem 1.4rem 1rem; display: grid;
+    grid-template-columns: 1.05fr .95fr; gap: 2.5rem; align-items: center; }
+  .hero .kicker { font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-dark); }
+  .hero h1 { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.04; margin: .7rem 0 .9rem; }
+  .hero p.sub { font-size: 1.06rem; color: var(--slate-700); max-width: 33ch; }
+  .hero .cta-row { margin-top: 1.4rem; display: flex; gap: .7rem; }
+
+  /* calculator card (signature) */
+  .calc {
+    background: var(--ink); color: #fff; border-radius: 18px; padding: 1.5rem 1.5rem 1.4rem;
+    box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+  }
+  .calc::after { content:""; position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(120% 80% at 100% 0%, rgba(13,148,136,.35), transparent 55%); }
+  .calc h3 { color: #fff; font-size: 1.2rem; position: relative; }
+  .calc .calc-sub { color: var(--slate-400); font-size: .86rem; margin: .15rem 0 1.1rem; position: relative; }
+  .calc .field { position: relative; margin-bottom: .8rem; }
+  .calc label { display: block; font-size: .76rem; font-weight: 600; color: #CBD5E1; margin-bottom: .35rem; }
+  .calc input { width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
+    color: #fff; border-radius: 10px; padding: .7rem .85rem; font-size: 1.05rem; font-family: var(--font-display); }
+  .calc input:focus { outline: 2px solid var(--teal); border-color: transparent; }
+  .calc .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .calc .result { position: relative; margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,.12); display: none; }
+  .calc .result.show { display: block; }
+  .calc .result .big { font-family: var(--font-display); font-size: 2.6rem; font-weight: 700; line-height: 1; color: #fff; }
+  .calc .result .big span { font-size: 1rem; color: var(--teal-soft); font-weight: 600; }
+  .calc .result .kits { color: var(--slate-400); font-size: .88rem; margin: .4rem 0 .9rem; }
+  .calc .formula { position: relative; margin-top: .9rem; font-size: .72rem; color: #64748B; font-family: var(--font-display); }
+
+  /* trust strip */
+  .trust { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); margin-top: 1.6rem; }
+  .trust-inner { max-width: 1200px; margin: 0 auto; padding: .85rem 1.4rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 500; color: var(--slate-700); }
+  .trust-item .ck { width: 18px; height: 18px; border-radius: 50%; background: var(--teal-soft); color: var(--teal-dark);
+    display: grid; place-items: center; font-size: .7rem; font-weight: 800; }
+
+  /* catalog */
+  .catalog { max-width: 1200px; margin: 0 auto; padding: 1.8rem 1.4rem 3rem; }
+  .cat-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: .8rem; }
+  .chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: #fff; color: var(--slate-700); border-radius: 999px;
+    padding: .42rem .85rem; font-size: .82rem; font-weight: 600; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
+  .prod { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem;
+    display: flex; flex-direction: column; transition: box-shadow .15s ease, transform .12s ease, border-color .15s; }
+  .prod:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: #DCE3EA; }
+  .prod .thumb { height: 96px; border-radius: 10px; margin-bottom: .8rem; position: relative;
+    background: linear-gradient(135deg, #EDF2F7, #E2E8F0); display: grid; place-items: center; }
+  .prod .thumb .cat-ico { font-family: var(--font-display); font-weight: 700; color: var(--slate-400); font-size: .8rem; letter-spacing: .03em; text-transform: uppercase; }
+  .prod .sku { font-size: .68rem; color: var(--slate-400); font-family: var(--font-display); letter-spacing: .03em; }
+  .prod .pname { font-weight: 600; font-size: .96rem; margin: .15rem 0 .1rem; line-height: 1.2; }
+  .prod .blurb { font-size: .8rem; color: var(--slate-500); flex: 1; }
+  .prod .price-row { display: flex; align-items: baseline; gap: .5rem; margin: .7rem 0 .2rem; }
+  .prod .you-price { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+  .prod .list-price { font-size: .82rem; color: var(--slate-400); text-decoration: line-through; }
+  .prod .unit { font-size: .72rem; color: var(--slate-400); }
+  .prod .pfoot { display: flex; align-items: center; justify-content: space-between; margin-top: .7rem; }
+  .prod .add { }
+  .prod.oos { opacity: .72; }
+
+  /* usual order band */
+  .usual { background: var(--ink); color: #fff; border-radius: 18px; padding: 1.4rem 1.5rem; margin: 0 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; flex-wrap: wrap; }
+  .usual h3 { color: #fff; font-size: 1.15rem; } .usual p { color: var(--slate-400); font-size: .88rem; margin-top: .2rem; }
+  .usual .pills { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .2rem; }
+  .usual .pill { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: .3rem .7rem; font-size: .78rem; }
+
+  /* cart drawer */
+  .scrim { position: fixed; inset: 0; background: rgba(15,23,42,.45); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 40; }
+  .scrim.show { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; height: 100vh; width: 400px; max-width: 92vw; background: #fff; z-index: 50;
+    transform: translateX(100%); transition: transform .25s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .drawer.show { transform: translateX(0); }
+  .drawer .dhead { padding: 1.2rem 1.3rem; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+  .drawer .dhead h3 { font-size: 1.1rem; }
+  .drawer .ditems { flex: 1; overflow-y: auto; padding: .6rem 1.3rem; }
+  .ditem { display: flex; gap: .8rem; padding: .8rem 0; border-bottom: 1px solid var(--line-soft); }
+  .ditem .ti { flex: 1; } .ditem .ti .n { font-weight: 600; font-size: .9rem; }
+  .ditem .ti .s { font-size: .74rem; color: var(--slate-400); }
+  .qtybox { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: .35rem; }
+  .qtybox button { background: #fff; border: none; width: 26px; height: 26px; font-weight: 700; color: var(--slate-700); }
+  .qtybox button:hover { background: var(--surface); }
+  .qtybox span { min-width: 26px; text-align: center; font-size: .85rem; font-weight: 600; }
+  .ditem .lineprice { font-family: var(--font-display); font-weight: 600; }
+  .drawer .dfoot { border-top: 1px solid var(--line); padding: 1.1rem 1.3rem 1.3rem; background: var(--surface); }
+  .drawer .line { display: flex; justify-content: space-between; font-size: .88rem; margin-bottom: .45rem; }
+  .drawer .line.save { color: var(--teal-dark); font-weight: 600; }
+  .drawer .line.tot { font-size: 1.05rem; font-weight: 700; border-top: 1px dashed var(--line); padding-top: .6rem; margin-top: .2rem; }
+  .drawer .line.tot .v { font-family: var(--font-display); }
+  .pickup-note { font-size: .76rem; color: var(--slate-500); text-align: center; margin-top: .7rem; }
+  .empty { text-align: center; color: var(--slate-400); font-size: .9rem; padding: 3rem 1rem; }
+
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink);
+    color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .85rem; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 60; box-shadow: var(--shadow-lg); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer { border-top: 1px solid var(--line); background: var(--surface); }
+  .foot-inner { max-width: 1200px; margin: 0 auto; padding: 1.6rem 1.4rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; color: var(--slate-500); font-size: .82rem; }
+
+  .demo-flag { background: var(--amber-soft); color: var(--amber); text-align: center; font-size: .76rem; font-weight: 600; padding: .35rem; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <div class="demo-flag">Interactive demo · Sealer Zone B2B storefront concept</div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="logo" href="../index.html">
+        <span class="mark">S<b>Z</b></span>
+        <span class="name">Sealer Zone</span>
+      </a>
+      <div class="nav-links">
+        <a href="#catalog" data-i18n="nav_products">Products</a>
+        <a href="#calc" data-i18n="nav_calc">Coverage calculator</a>
+        <a href="#" data-i18n="nav_account">My account</a>
+      </div>
+      <div class="nav-right">
+        <span class="lang">
+          <button data-lang="en" class="on">EN</button>
+          <button data-lang="pt">PT</button>
+        </span>
+        <span class="acct-chip" title="B2B account">
+          <span class="tierdot"></span>
+          <span class="av">JS</span>
+        </span>
+        <button class="btn btn-dark btn-sm cart-btn" id="openCart">
+          <span data-i18n="cart_title">Your order</span>
+          <span class="count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div>
+      <div class="kicker" data-i18n="hero_kicker">Contractor supply · Central Florida</div>
+      <h1 data-i18n="hero_title">Sealers, epoxy &amp; coatings — now order online, anytime.</h1>
+      <p class="sub" data-i18n="hero_sub">The same contractor pricing you get at the counter, without waiting for the 7:30–2:00 window.</p>
+      <div class="cta-row">
+        <a href="#catalog" class="btn btn-primary" data-i18n="hero_cta">Browse products</a>
+        <a href="#calc" class="btn btn-ghost" data-i18n="nav_calc">Coverage calculator</a>
+      </div>
+    </div>
+
+    <!-- SIGNATURE: coverage calculator -->
+    <div class="calc" id="calc">
+      <h3 data-i18n="calc_title">Coverage calculator</h3>
+      <div class="calc-sub" data-i18n="calc_sub">How much epoxy for the job?</div>
+      <div class="grid2">
+        <div class="field">
+          <label data-i18n="calc_area">Floor area (sq ft)</label>
+          <input id="cArea" type="number" inputmode="numeric" placeholder="1200" value="1200">
+        </div>
+        <div class="field">
+          <label data-i18n="calc_mil">Coat thickness (mils)</label>
+          <input id="cMil" type="number" inputmode="numeric" placeholder="10" value="10">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="calcBtn" style="width:100%" data-i18n="calc_btn">Calculate gallons</button>
+      <div class="result" id="calcResult">
+        <div class="big"><span id="calcGal">0</span> <span data-i18n="calc_gal">gallons</span></div>
+        <div class="kits" id="calcKits"></div>
+        <button class="btn btn-ghost btn-sm" id="calcAdd" data-i18n="calc_add">Add kits to order</button>
+      </div>
+      <div class="formula">gallons = (sq ft × mils) ÷ 1604</div>
+    </div>
+  </header>
+
+  <!-- TRUST -->
+  <div class="trust">
+    <div class="trust-inner">
+      <div class="trust-item"><span class="ck">✓</span><span data-i18n="trust_1">Order 24/7 online</span></div>
+      <div class="trust-item"><span class="ck">✓</span><span data-i18n="trust_2">Contractor &amp; volume pricing</span></div>
+      <div class="trust-item"><span class="ck">✓</span><span data-i18n="trust_3">Tax-exempt accounts</span></div>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <main class="catalog" id="catalog">
+    <!-- usual order -->
+    <section class="usual">
+      <div>
+        <h3 data-i18n="usual_title">Your usual order</h3>
+        <p data-i18n="usual_sub">One tap to reorder what you buy most.</p>
+        <div class="pills" id="usualPills"></div>
+      </div>
+      <button class="btn btn-primary" id="reorderBtn" data-i18n="reorder">Add all to order</button>
+    </section>
+
+    <div class="cat-head">
+      <div class="chips" id="chips"></div>
+      <span class="acct-chip" style="background:#fff">
+        <span class="tierdot"></span>
+        <span style="font-size:.8rem;color:var(--slate-600)"><span data-i18n="logged_as">Signed in as</span> <b>Silva Concrete Coatings</b> · <span id="tierLabel"></span></span>
+      </span>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© Sealer Zone (demo) · Central Florida contractor supply</div>
+      <div>Mon–Fri counter 7:30–2:00 · Online ordering always open</div>
+    </div>
+  </footer>
+
+  <!-- CART -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Your order">
+    <div class="dhead">
+      <h3 data-i18n="cart_title">Your order</h3>
+      <button class="btn btn-ghost btn-sm" id="closeCart" aria-label="Close">✕</button>
+    </div>
+    <div class="ditems" id="ditems"></div>
+    <div class="dfoot" id="dfoot"></div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

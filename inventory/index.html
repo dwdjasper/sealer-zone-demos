@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sealer Zone — Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+  .demo-flag { background: var(--amber-soft); color: var(--amber); text-align: center; font-size: .76rem; font-weight: 600; padding: .35rem; }
+
+  .alert-card { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: var(--radius-sm);
+    padding: .85rem 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; box-shadow: var(--shadow-sm); }
+  .alert-card.out { border-left-color: var(--red); }
+  .alert-card .ai { flex: 1; }
+  .alert-card .an { font-weight: 600; font-size: .92rem; }
+  .alert-card .ad { font-size: .78rem; color: var(--slate-500); margin-top: .1rem; }
+  .alert-card .sug { text-align: right; }
+  .alert-card .sug .q { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+  .alert-card .sug .ql { font-size: .7rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: .04em; }
+
+  .stockbar { width: 130px; }
+  .stockbar .track { height: 7px; border-radius: 999px; background: var(--line); position: relative; overflow: visible; }
+  .stockbar .fill { height: 100%; border-radius: 999px; }
+  .stockbar .rp { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--slate-700); }
+  .legend { display: flex; gap: 1.2rem; font-size: .76rem; color: var(--slate-500); margin-top: .5rem; }
+  .legend span { display: inline-flex; align-items: center; gap: .35rem; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .chart { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-sm); }
+  .chart h3 { font-size: 1rem; margin-bottom: 1rem; }
+  .bars { display: flex; flex-direction: column; gap: .6rem; }
+  .barrow { display: grid; grid-template-columns: 150px 1fr 44px; align-items: center; gap: .8rem; font-size: .82rem; }
+  .barrow .bt { height: 22px; border-radius: 5px; background: var(--teal); }
+  .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { border: none; background: transparent; padding: .4rem .8rem; border-radius: 7px; font-size: .84rem; font-weight: 600; color: var(--slate-600); }
+  .seg button.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+  .hide { display: none; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+  @media (max-width: 1000px){ .twocol { grid-template-columns: 1fr; } }
+  .po-btn { white-space: nowrap; }
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink);
+    color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .85rem; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 60; box-shadow: var(--shadow-lg); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="demo-flag">Interactive demo · Sealer Zone inventory concept</div>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">SZ</div>
+      <div class="name">Sealer Zone<small>Inventory</small></div>
+    </div>
+    <a class="nav-item active" data-view="dash"><span class="ico">▦</span> Overview</a>
+    <a class="nav-item" data-view="stock"><span class="ico">▤</span> All stock</a>
+    <a class="nav-item" data-view="reorder"><span class="ico">⚠</span> Reorder
+      <span class="badge badge-amber" id="reorderPill" style="margin-left:auto"></span></a>
+    <div class="nav-label">Soon</div>
+    <a class="nav-item" style="opacity:.5"><span class="ico">⇄</span> Receiving</a>
+    <a class="nav-item" style="opacity:.5"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="who"><div class="av">SZ</div><div class="meta">Warehouse<small>Sealer Zone</small></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div><h1 id="viewTitle">Inventory overview</h1><div class="sub" id="viewSub">Live stock health and reorder signals</div></div>
+      <div class="seg" id="quickViews">
+        <button data-view="dash" class="on">Overview</button>
+        <button data-view="stock">All stock</button>
+        <button data-view="reorder">Reorder</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="view-dash">
+        <div class="stat-grid">
+          <div class="stat"><div class="accent-bar"></div><div class="label">Active SKUs</div><div class="value tnum" id="kSku">—</div><div class="trend muted">tracked items</div></div>
+          <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Low stock</div><div class="value tnum" id="kLow" style="color:var(--amber)">—</div><div class="trend muted">below reorder point</div></div>
+          <div class="stat"><div class="accent-bar" style="background:var(--red)"></div><div class="label">Out of stock</div><div class="value tnum" id="kOut" style="color:var(--red)">—</div><div class="trend muted">empty shelves</div></div>
+          <div class="stat"><div class="accent-bar"></div><div class="label">Inventory value</div><div class="value tnum" id="kVal">—</div><div class="trend muted">at cost</div></div>
+        </div>
+
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--amber)">Action needed</div><h2>Reorder before you run out</h2></div>
+          <button class="btn btn-dark btn-sm" id="poAll">Generate purchase order</button></div>
+        <div id="alertList"></div>
+
+        <div class="sec-head"><div><div class="eyebrow">Demand</div><h2>Fastest movers (units / week)</h2></div></div>
+        <div class="chart"><div class="bars" id="velChart"></div></div>
+      </section>
+
+      <!-- ALL STOCK -->
+      <section id="view-stock" class="hide">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Item</th><th>Category</th><th>Stock level</th><th class="t-right">On hand</th><th class="t-right">Velocity</th><th class="t-right">Weeks left</th><th>Status</th></tr></thead>
+            <tbody id="stockRows"></tbody>
+          </table>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i> Healthy</span>
+          <span><i style="background:var(--amber)"></i> Low — below reorder point</span>
+          <span><i style="background:var(--red)"></i> Out of stock</span>
+          <span><i style="background:var(--slate-700)"></i> ▏ reorder point</span>
+        </div>
+      </section>
+
+      <!-- REORDER -->
+      <section id="view-reorder" class="hide">
+        <div class="row between center" style="margin-bottom:1rem">
+          <div class="muted" style="font-size:.85rem">Suggested quantities keep ~${'4'} weeks of cover based on recent sell-through.</div>
+          <button class="btn btn-dark btn-sm" id="poAll2">Generate purchase order</button>
+        </div>
+        <div id="alertList2"></div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+  const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0});
+  const statusOf = it => it.onHand===0 ? "out" : (it.onHand <= it.reorder ? "low" : "ok");
+  const weeksLeft = it => it.vel>0 ? (it.onHand/it.vel) : Infinity;
+  const suggested = it => Math.max(0, Math.ceil(it.vel*TARGET_WEEKS) - it.onHand);
+
+  function kpis(){
+    document.getElementById("kSku").textContent = STOCK.length;
+    document.getElementById("kLow").textContent = STOCK.filter(i=>statusOf(i)==="low").length;
+    document.getElementById("kOut").textContent = STOCK.filter(i=>statusOf(i)==="out").length;
+    const val = STOCK.reduce((a,i)=>a+i.onHand*i.cost,0);
+    document.getElementById("kVal").textContent = money(val);
+    const needs = STOCK.filter(i=>statusOf(i)!=="ok").length;
+    document.getElementById("reorderPill").textContent = needs;
+  }
+
+  function statusBadge(s){
+    if(s==="out") return '<span class="badge badge-red"><span class="dot"></span>Out</span>';
+    if(s==="low") return '<span class="badge badge-amber"><span class="dot"></span>Low</span>';
+    return '<span class="badge badge-green"><span class="dot"></span>Healthy</span>';
+  }
+  function stockBar(it){
+    const s = statusOf(it);
+    const color = s==="out"?"var(--red)":s==="low"?"var(--amber)":"var(--green)";
+    const scaleMax = Math.max(it.reorder*2, it.onHand, 1);
+    const fillPct = Math.min(100, it.onHand/scaleMax*100);
+    const rpPct = Math.min(100, it.reorder/scaleMax*100);
+    return `<div class="stockbar"><div class="track">
+      <div class="fill" style="width:${fillPct}%;background:${color}"></div>
+      <div class="rp" style="left:${rpPct}%"></div></div></div>`;
+  }
+
+  /* alerts (low + out), worst first */
+  function alertItems(){
+    return STOCK.filter(i=>statusOf(i)!=="ok")
+      .sort((a,b)=> (statusOf(a)==="out"?-1:0) - (statusOf(b)==="out"?-1:0) || weeksLeft(a)-weeksLeft(b));
+  }
+  function renderAlerts(targetId){
+    const items = alertItems();
+    document.getElementById(targetId).innerHTML = items.map(it=>{
+      const s = statusOf(it);
+      const wl = weeksLeft(it);
+      const sub = s==="out" ? "Out of stock — losing sales now" :
+        `${it.onHand} ${it.unit} left · ~${wl.toFixed(1)} weeks at current sell-through`;
+      return `<div class="alert-card ${s==='out'?'out':''}">
+        <div class="ai"><div class="an">${it.name} <span class="muted" style="font-weight:400;font-size:.78rem">· ${it.sku}</span></div>
+          <div class="ad">${sub}</div></div>
+        <div class="sug"><div class="q">+${suggested(it)}</div><div class="ql">suggested ${it.unit}s</div></div>
+        <button class="btn btn-primary btn-sm po-btn">Add to PO</button>
+      </div>`;
+    }).join("");
+    document.querySelectorAll(`#${targetId} .po-btn`).forEach(b=>b.onclick=()=>toast("Added to draft purchase order"));
+  }
+
+  function velChart(){
+    const rows = [...STOCK].sort((a,b)=>b.vel-a.vel).slice(0,8);
+    const max = rows[0].vel;
+    document.getElementById("velChart").innerHTML = rows.map(it=>`
+      <div class="barrow">
+        <span class="strong" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.name}</span>
+        <div class="bt" style="width:${Math.max(6,it.vel/max*100)}%;background:${statusOf(it)==='ok'?'var(--teal)':statusOf(it)==='low'?'var(--amber)':'var(--red)'}"></div>
+        <span class="t-right tnum strong">${it.vel.toFixed(1)}</span>
+      </div>`).join("");
+  }
+
+  function stockTable(){
+    const rows = [...STOCK].sort((a,b)=>{
+      const order={out:0,low:1,ok:2}; return order[statusOf(a)]-order[statusOf(b)] || weeksLeft(a)-weeksLeft(b);
+    });
+    document.getElementById("stockRows").innerHTML = rows.map(it=>{
+      const wl = weeksLeft(it);
+      const wlTxt = wl===Infinity ? "—" : wl.toFixed(1);
+      const wlColor = wl<2 ? "color:var(--red);font-weight:600" : wl<4 ? "color:var(--amber);font-weight:600" : "";
+      return `<tr>
+        <td><div class="strong">${it.name}</div><div class="muted" style="font-size:.74rem">${it.sku}</div></td>
+        <td class="muted">${it.cat}</td>
+        <td>${stockBar(it)}</td>
+        <td class="t-right tnum strong">${it.onHand}</td>
+        <td class="t-right tnum muted">${it.vel.toFixed(1)}/wk</td>
+        <td class="t-right tnum" style="${wlColor}">${wlTxt}</td>
+        <td>${statusBadge(statusOf(it))}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  /* toast */
+  let tm; function toast(m){ const e=document.getElementById("toast"); e.textContent=m; e.classList.add("show"); clearTimeout(tm); tm=setTimeout(()=>e.classList.remove("show"),1700); }
+  document.getElementById("poAll").onclick = ()=>toast("Draft PO created for "+alertItems().length+" items");
+  document.getElementById("poAll2").onclick = ()=>toast("Draft PO created for "+alertItems().length+" items");
+
+  /* views */
+  const titles = { dash:["Inventory overview","Live stock health and reorder signals"],
+    stock:["All stock","Every tracked SKU and its velocity"],
+    reorder:["Reorder","Suggested purchase quantities"] };
+  function setView(v){
+    ["dash","stock","reorder"].forEach(x=>document.getElementById("view-"+x).classList.toggle("hide", x!==v));
+    document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.toggle("active",n.dataset.view===v));
+    document.querySelectorAll('#quickViews button').forEach(n=>n.classList.toggle("on",n.dataset.view===v));
+    document.getElementById("viewTitle").textContent=titles[v][0];
+    document.getElementById("viewSub").textContent=titles[v][1];
+    if(v==="stock") stockTable();
+    if(v==="reorder") renderAlerts("alertList2");
+  }
+  document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener("click",()=>setView(el.dataset.view)));
+
+  /* init */
+  kpis(); renderAlerts("alertList"); velChart();
+})();
+</script>
+</body>
+</html>

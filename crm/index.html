@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sealer Zone — CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+  .demo-flag { background: var(--amber-soft); color: var(--amber); text-align: center; font-size: .76rem; font-weight: 600; padding: .35rem; }
+
+  /* pipeline board */
+  .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .col { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; min-height: 160px; }
+  .col h4 { font-family: var(--font-body); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-500);
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
+  .col h4 .n { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0 .5rem; font-size: .72rem; color: var(--slate-700); }
+  .col[data-stage="ready"] h4 { color: var(--teal-dark); }
+  .ocard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .75rem .8rem; margin-bottom: .6rem;
+    box-shadow: var(--shadow-sm); cursor: grab; transition: box-shadow .14s, transform .1s, border-color .14s; }
+  .ocard:hover { box-shadow: var(--shadow); border-color: #DCE3EA; transform: translateY(-1px); }
+  .ocard .oid { font-family: var(--font-display); font-weight: 600; font-size: .9rem; }
+  .ocard .oco { font-size: .78rem; color: var(--slate-600); margin: .15rem 0; }
+  .ocard .om { display: flex; align-items: center; justify-content: space-between; margin-top: .5rem; }
+  .ocard .ot { font-family: var(--font-display); font-weight: 600; font-size: .88rem; }
+  .ocard .age { font-size: .7rem; color: var(--slate-400); }
+  .ocard.dragging { opacity: .4; }
+  .col.over { border-color: var(--teal); background: var(--teal-soft); }
+
+  .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { border: none; background: transparent; padding: .4rem .8rem; border-radius: 7px; font-size: .84rem; font-weight: 600; color: var(--slate-600); }
+  .seg button.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+
+  .lang-flag { font-size: .68rem; font-weight: 700; padding: .12rem .4rem; border-radius: 4px; }
+  .lang-PT { background: #DCFCE7; color: #15803D; } .lang-EN { background: #E0E7FF; color: #4338CA; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: .76rem; font-weight: 700; flex: none; }
+  .cust-cell { display: flex; align-items: center; gap: .65rem; }
+  .hide { display: none; }
+  .search { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--line); border-radius: 9px; padding: .5rem .8rem; background: #fff; width: 280px; }
+  .search input { border: none; outline: none; font-size: .88rem; width: 100%; font-family: inherit; }
+  .ltvbar { width: 90px; }
+</style>
+</head>
+<body>
+<div class="demo-flag">Interactive demo · Sealer Zone CRM concept</div>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">SZ</div>
+      <div class="name">Sealer Zone<small>CRM</small></div>
+    </div>
+    <a class="nav-item active" data-view="dash"><span class="ico">▦</span> Dashboard</a>
+    <a class="nav-item" data-view="accounts"><span class="ico">▤</span> Accounts</a>
+    <a class="nav-item" data-view="pipeline"><span class="ico">◷</span> Order pipeline</a>
+    <div class="nav-label">Soon</div>
+    <a class="nav-item" style="opacity:.5"><span class="ico">✉</span> Messages</a>
+    <a class="nav-item" style="opacity:.5"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="who">
+      <div class="av">SZ</div>
+      <div class="meta">Counter staff<small>Sealer Zone</small></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="viewTitle">Dashboard</h1>
+        <div class="sub" id="viewSub">Your book of business at a glance</div>
+      </div>
+      <div class="seg" id="quickViews">
+        <button data-view="dash" class="on">Overview</button>
+        <button data-view="accounts">Accounts</button>
+        <button data-view="pipeline">Pipeline</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="view-dash">
+        <div class="stat-grid">
+          <div class="stat"><div class="accent-bar"></div><div class="label">Active accounts</div><div class="value tnum" id="kAcc">—</div><div class="trend" style="color:var(--green)">+3 this quarter</div></div>
+          <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Avg order value</div><div class="value tnum" id="kAov">—</div><div class="trend muted">across all accounts</div></div>
+          <div class="stat"><div class="accent-bar"></div><div class="label">Open orders</div><div class="value tnum" id="kOpen">—</div><div class="trend muted" id="kOpenSub">in fulfillment</div></div>
+          <div class="stat"><div class="accent-bar" style="background:var(--red)"></div><div class="label">A/R outstanding</div><div class="value tnum" id="kAr">—</div><div class="trend" style="color:var(--red)" id="kArSub">on terms</div></div>
+        </div>
+
+        <div class="sec-head"><div><div class="eyebrow">Highest value</div><h2>Top accounts by lifetime value</h2></div></div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th class="t-right">Orders</th><th>Lifetime value</th><th>Last order</th></tr></thead>
+            <tbody id="topAccounts"></tbody>
+          </table>
+        </div>
+
+        <div class="sec-head"><div><div class="eyebrow">Fulfillment</div><h2>Orders in progress</h2></div></div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Order</th><th>Account</th><th>Stage</th><th class="t-right">Value</th><th class="t-right">Age</th></tr></thead>
+            <tbody id="openOrders"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ACCOUNTS -->
+      <section id="view-accounts" class="hide">
+        <div class="row between center" style="margin-bottom:1rem">
+          <div class="search">
+            <span class="muted">⌕</span>
+            <input id="acctSearch" placeholder="Search company or contact…">
+          </div>
+          <div class="muted" style="font-size:.85rem" id="acctCount"></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th>Tax</th><th class="t-right">Orders</th><th>Lifetime value</th><th class="t-right">Balance</th><th>Last order</th></tr></thead>
+            <tbody id="acctRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PIPELINE -->
+      <section id="view-pipeline" class="hide">
+        <div class="row between center" style="margin-bottom:1rem">
+          <div class="muted" style="font-size:.85rem">Drag an order card between stages to update fulfillment.</div>
+        </div>
+        <div class="board" id="board"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+  const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0});
+  const money2 = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const initials = s => s.split(/\s|—/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+  const custById = id => CUSTOMERS.find(c=>c.id===id);
+  const stageLabel = id => (STAGES.find(s=>s.id===id)||{}).label || id;
+  const stageBadge = id => id==="ready" ? "badge-teal" : id==="done" ? "badge-green" : id==="packing" ? "badge-amber" : "badge-slate";
+
+  /* ----- dashboard KPIs ----- */
+  function kpis(){
+    document.getElementById("kAcc").textContent = CUSTOMERS.length;
+    const aov = Math.round(CUSTOMERS.reduce((a,c)=>a+c.ltv,0) / CUSTOMERS.reduce((a,c)=>a+c.orders,0));
+    document.getElementById("kAov").textContent = money(aov);
+    const open = ORDERS.filter(o=>o.stage!=="done");
+    document.getElementById("kOpen").textContent = open.length;
+    const ar = CUSTOMERS.reduce((a,c)=>a+c.balance,0);
+    document.getElementById("kAr").textContent = money(ar);
+    const arCount = CUSTOMERS.filter(c=>c.balance>0).length;
+    document.getElementById("kArSub").textContent = arCount + " accounts on terms";
+  }
+
+  function tierBadge(t){ return `<span class="badge ${TIER_BADGE[t]}">${t}</span>`; }
+  function langFlag(l){ return `<span class="lang-flag lang-${l}">${l}</span>`; }
+
+  /* ----- dashboard tables ----- */
+  function topAccounts(){
+    const rows = [...CUSTOMERS].sort((a,b)=>b.ltv-a.ltv).slice(0,5);
+    const max = rows[0].ltv;
+    document.getElementById("topAccounts").innerHTML = rows.map(c=>`
+      <tr>
+        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div>
+          <div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.id}</div></div></div></td>
+        <td>${tierBadge(c.tier)}</td>
+        <td>${langFlag(c.lang)}</td>
+        <td class="t-right tnum">${c.orders}</td>
+        <td><div class="row center" style="gap:.6rem">
+          <div class="mini-bar ltvbar"><span style="width:${Math.round(c.ltv/max*100)}%;background:var(--teal)"></span></div>
+          <span class="strong tnum">${money(c.ltv)}</span></div></td>
+        <td class="muted">${c.last}</td>
+      </tr>`).join("");
+  }
+  function openOrders(){
+    document.getElementById("openOrders").innerHTML = ORDERS.filter(o=>o.stage!=="done").map(o=>`
+      <tr>
+        <td class="strong">${o.id}</td>
+        <td>${o.company}</td>
+        <td><span class="badge ${stageBadge(o.stage)}"><span class="dot"></span>${stageLabel(o.stage)}</span></td>
+        <td class="t-right tnum strong">${money2(o.total)}</td>
+        <td class="t-right muted">${o.age}</td>
+      </tr>`).join("");
+  }
+
+  /* ----- accounts ----- */
+  function renderAccounts(filter=""){
+    const f = filter.toLowerCase();
+    const rows = CUSTOMERS.filter(c=> (c.company+c.contact).toLowerCase().includes(f));
+    document.getElementById("acctCount").textContent = rows.length + " accounts";
+    const max = Math.max(...CUSTOMERS.map(c=>c.ltv));
+    document.getElementById("acctRows").innerHTML = rows.map(c=>`
+      <tr>
+        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div>
+          <div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.phone}</div></div></div></td>
+        <td>${tierBadge(c.tier)}</td>
+        <td>${langFlag(c.lang)}</td>
+        <td>${c.taxExempt?'<span class="badge badge-slate">Exempt</span>':'<span class="muted">—</span>'}</td>
+        <td class="t-right tnum">${c.orders}</td>
+        <td><div class="row center" style="gap:.6rem"><div class="mini-bar ltvbar"><span style="width:${Math.round(c.ltv/max*100)}%;background:var(--teal)"></span></div><span class="strong tnum">${money(c.ltv)}</span></div></td>
+        <td class="t-right tnum ${c.balance>0?'':'muted'}" ${c.balance>0?'style=color:var(--red);font-weight:600':''}>${c.balance>0?money2(c.balance):'—'}</td>
+        <td class="muted">${c.last}</td>
+      </tr>`).join("");
+  }
+  document.getElementById("acctSearch").addEventListener("input", e=>renderAccounts(e.target.value));
+
+  /* ----- pipeline board (drag & drop) ----- */
+  let dragId = null;
+  function renderBoard(){
+    const board = document.getElementById("board");
+    board.innerHTML = STAGES.map(s=>{
+      const cards = ORDERS.filter(o=>o.stage===s.id);
+      return `<div class="col" data-stage="${s.id}">
+        <h4>${s.label} <span class="n">${cards.length}</span></h4>
+        ${cards.map(o=>`
+          <div class="ocard" draggable="true" data-id="${o.id}">
+            <div class="oid">${o.id}</div>
+            <div class="oco">${o.company}</div>
+            <div class="om"><span class="ot tnum">${money2(o.total)}</span><span class="age">${o.items} items · ${o.age}</span></div>
+          </div>`).join("")}
+      </div>`;
+    }).join("");
+
+    board.querySelectorAll(".ocard").forEach(card=>{
+      card.addEventListener("dragstart", ()=>{ dragId = card.dataset.id; card.classList.add("dragging"); });
+      card.addEventListener("dragend", ()=>{ card.classList.remove("dragging"); });
+    });
+    board.querySelectorAll(".col").forEach(col=>{
+      col.addEventListener("dragover", e=>{ e.preventDefault(); col.classList.add("over"); });
+      col.addEventListener("dragleave", ()=> col.classList.remove("over"));
+      col.addEventListener("drop", e=>{
+        e.preventDefault(); col.classList.remove("over");
+        const o = ORDERS.find(x=>x.id===dragId);
+        if(o){ o.stage = col.dataset.stage; renderBoard(); kpis(); openOrders(); }
+      });
+    });
+  }
+
+  /* ----- view switching ----- */
+  const titles = {
+    dash:["Dashboard","Your book of business at a glance"],
+    accounts:["Accounts","Every B2B account, pricing tier, and balance"],
+    pipeline:["Order pipeline","Track each order from quote to pickup"]
+  };
+  function setView(v){
+    ["dash","accounts","pipeline"].forEach(x=>{
+      document.getElementById("view-"+x).classList.toggle("hide", x!==v);
+    });
+    document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.toggle("active", n.dataset.view===v));
+    document.querySelectorAll('#quickViews button').forEach(n=>n.classList.toggle("on", n.dataset.view===v));
+    document.getElementById("viewTitle").textContent = titles[v][0];
+    document.getElementById("viewSub").textContent = titles[v][1];
+    if(v==="accounts") renderAccounts(document.getElementById("acctSearch").value);
+    if(v==="pipeline") renderBoard();
+  }
+  document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener("click", ()=>setView(el.dataset.view)));
+
+  /* init */
+  kpis(); topAccounts(); openOrders();
+})();
+</script>
+</body>
+</html>
