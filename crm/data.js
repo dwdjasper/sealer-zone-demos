@@ -57,3 +57,17 @@ const HISTORY = {
 };
 
 const TIER_BADGE = { Gold:"badge-amber", Silver:"badge-slate", Bronze:"badge-slate" };
+
+// what each account buys most (product, % of their spend) — drives the "product mix" insight
+const ACCOUNT_MIX = {
+  "C-1027": [["ArmorCoat 100% Solids Kit",38],["Vinyl Flake Media",22],["Polyaspartic Topcoat",20],["Epoxy Primer Coat",20]],
+  "C-1031": [["ArmorCoat 100% Solids Kit",44],["Epoxy Primer Coat",31],["Polyaspartic Topcoat",25]],
+  "C-1009": [["ArmorCoat 100% Solids Kit",40],["Epoxy Primer Coat",28],["Heavy-Duty Degreaser",18],["Polyaspartic Topcoat",14]],
+  "C-1044": [["ArmorCoat 100% Solids Kit",55],["Vinyl Flake Media",45]],
+  "C-1052": [["Vinyl Flake Media",42],["Polyaspartic Topcoat",33],["Epoxy Primer Coat",25]],
+  "C-1063": [["ArmorCoat 100% Solids Kit",48],["Epoxy Primer Coat",27],["Polyaspartic Topcoat",25]],
+  "C-1071": [["ArmorCoat 100% Solids Kit",60],["Vinyl Flake Media",40]],
+  "C-1078": [["AquaSeal Pro 5000",40],["Heavy-Duty Degreaser",32],["WetLook Acrylic Sealer",28]],
+  "C-1085": [["AquaSeal Pro 5000",55],["Heavy-Duty Degreaser",45]],
+  "C-1090": [["Epoxy Primer Coat",36],["Polyaspartic Topcoat",34],["ArmorCoat 100% Solids Kit",30]]
+};

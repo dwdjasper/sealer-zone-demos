@@ -189,26 +189,54 @@
     const histRows = hist.length ? hist.map(h=>`<tr class="clickable" data-order="${h[0]}"><td class="strong">${h[0]}</td><td class="muted">${h[1]}</td><td class="t-right tnum strong">${money2(h[2])}</td><td class="t-right chevron">›</td></tr>`).join("")
       : `<tr><td colspan="4" class="muted" style="text-align:center;padding:1.4rem">No recent orders on file.</td></tr>`;
     const notes = c.notes.length ? c.notes.map(n=>`<div class="note">${n.t}<div class="meta">${n.w} · ${n.d}</div></div>`).join("") : `<div class="muted" style="font-size:.85rem">No notes yet.</div>`;
+
+    // --- derived intelligence ---
+    const ltvs=[...CUSTOMERS.map(x=>x.ltv)].sort((a,b)=>b-a);
+    const thr=ltvs[Math.floor(ltvs.length*0.3)];
+    const rank=[...CUSTOMERS].sort((a,b)=>b.ltv-a.ltv).findIndex(x=>x.id===c.id)+1;
+    const seg=segmentOf(c,thr);
+    const segColor={Champion:"badge-green",Loyal:"badge-teal","At-risk":"badge-amber",New:"badge-slate"}[seg];
+    const perYear=Math.max(1,Math.round(c.orders/Math.max(1,(2026-parseInt(c.since)))));
+    const tr=trendPct(c), trTxt=tr>0.04?`▲ ${Math.round(tr*100)}%`:tr<-0.04?`▼ ${Math.abs(Math.round(tr*100))}%`:"steady";
+    const trColor=tr>0.04?"var(--green)":tr<-0.04?"var(--red)":"var(--slate-500)";
+    const mix=ACCOUNT_MIX[id]||[];
+    const mixMax=Math.max(...mix.map(m=>m[1]),1);
+    const mixHTML=mix.map(m=>`<div style="margin-bottom:.7rem"><div class="row between" style="font-size:.82rem;margin-bottom:.28rem"><span class="strong">${m[0]}</span><span class="muted tnum">${m[1]}%</span></div><div class="mini-bar"><span style="width:${Math.round(m[1]/mixMax*100)}%;background:var(--teal)"></span></div></div>`).join("");
+
+    // --- next best action ---
+    const acts=[];
+    if(seg==="At-risk") acts.push(["Re-engage",`Last order ${c.last}. A quick ${c.lang==='PT'?'Portuguese ':''}text or call could bring them back before they drift.`,"badge-amber"]);
+    if(tr>0.15 && c.tier!=="Gold") acts.push(["Offer better pricing",`Spend is up ${Math.round(tr*100)}% — a move to ${c.tier==='Bronze'?'Silver':'Gold'} pricing could lock in loyalty.`,"badge-teal"]);
+    if(c.balance>0) acts.push(["Follow up on balance",`${money2(c.balance)} outstanding on terms.`,"badge-slate"]);
+    if(mix.length && !mix.some(m=>/Polyaspartic|Topcoat/.test(m[0]))) acts.push(["Cross-sell topcoat","Buys base coats but no topcoat — Polyaspartic gives same-day return to service.","badge-teal"]);
+    if(seg==="Champion") acts.push(["Protect this account",`Ranked #${rank} by value. Keep lead times honest and service white-glove.`,"badge-green"]);
+    if(!acts.length) acts.push(["Keep it steady","Healthy, active account. Consistent service is all this one needs.","badge-slate"]);
+    const actsHTML=acts.slice(0,3).map(a=>`<div class="note" style="border-left:3px solid var(--teal);background:#fff"><div class="row between center" style="margin-bottom:.2rem"><span class="strong" style="font-size:.88rem">${a[0]}</span><span class="badge ${a[2]}">suggested</span></div><div class="muted" style="font-size:.82rem;line-height:1.45">${a[1]}</div></div>`).join("");
+
     $("view-account-detail").innerHTML = `
       <button class="backlink" data-view="accounts">← Back to accounts</button>
       <div class="detail-head">
         <div class="row center" style="gap:1rem"><div class="avatar lg">${initials(c.company)}</div>
           <div><div class="detail-title">${c.company}</div><div class="detail-sub">${c.contact} · ${c.phone} · ${c.email}</div>
-            <div style="margin-top:.5rem;display:flex;gap:.4rem">${tierBadge(c.tier)} ${langFlag(c.lang)} ${c.taxExempt?'<span class="badge badge-slate">Tax exempt</span>':''} <span class="badge badge-slate">Since ${c.since}</span></div></div></div>
+            <div style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap"><span class="badge ${segColor}">${seg}</span>${tierBadge(c.tier)} ${langFlag(c.lang)} ${c.taxExempt?'<span class="badge badge-slate">Tax exempt</span>':''} <span class="badge badge-slate">Since ${c.since}</span></div></div></div>
         ${c.balance>0?`<div style="text-align:right"><div class="muted" style="font-size:.76rem">Outstanding balance</div><div style="font-family:var(--font-display);font-weight:600;font-size:1.4rem;color:var(--red)">${money2(c.balance)}</div></div>`:''}
       </div>
-      <div class="stat-grid" style="margin-bottom:1.6rem">
-        <div class="stat"><div class="accent-bar"></div><div class="label">Lifetime value</div><div class="value tnum">${money(c.ltv)}</div></div>
-        <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Total orders</div><div class="value tnum">${c.orders}</div></div>
-        <div class="stat"><div class="accent-bar"></div><div class="label">Avg order value</div><div class="value tnum">${money(c.aov)}</div></div>
-        <div class="stat"><div class="accent-bar" style="background:var(--green)"></div><div class="label">Last order</div><div class="value" style="font-size:1.2rem;margin-top:.6rem">${c.last}</div></div>
+      <div class="stat-grid" style="margin-bottom:1.2rem">
+        <div class="stat"><div class="accent-bar"></div><div class="label">Lifetime value</div><div class="value tnum">${money(c.ltv)}</div><div class="trend muted">#${rank} of ${CUSTOMERS.length} accounts</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Total orders</div><div class="value tnum">${c.orders}</div><div class="trend muted">~${perYear}/year</div></div>
+        <div class="stat"><div class="accent-bar"></div><div class="label">Avg order value</div><div class="value tnum">${money(c.aov)}</div><div class="trend muted">per order</div></div>
+        <div class="stat"><div class="accent-bar" style="background:${trColor}"></div><div class="label">Spend trend</div><div class="value" style="font-size:1.5rem;margin-top:.5rem;color:${trColor}">${trTxt}</div><div class="trend muted">vs prior quarter</div></div>
       </div>
       <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap">
         <div style="flex:1.4;min-width:320px">
+          <div class="sec-head"><div><div class="eyebrow" style="color:var(--teal-dark)">Recommended</div><h2>Next best action</h2></div></div>
+          <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.4rem">${actsHTML}</div>
           <div class="sec-head"><div><div class="eyebrow">History</div><h2>Recent orders</h2></div></div>
           <div class="table-wrap"><table class="data"><tbody>${histRows}</tbody></table></div>
         </div>
         <div style="flex:1;min-width:260px">
+          <div class="sec-head"><div><div class="eyebrow">What they buy</div><h2>Product mix</h2></div></div>
+          <div class="card" style="padding:1.1rem 1.2rem 0.5rem">${mixHTML||'<div class="muted" style="font-size:.85rem">No purchase data.</div>'}</div>
           <div class="sec-head"><div><div class="eyebrow">Trend</div><h2>Monthly spend</h2></div></div>
           <div class="card" style="padding:1.1rem 1.2rem">${sparkline(c.spend)}<div class="muted" style="font-size:.75rem;margin-top:.6rem">Last 12 months (in $1,000s)</div></div>
           <div class="sec-head"><div><div class="eyebrow">Account</div><h2>Notes</h2></div></div>
@@ -218,7 +246,7 @@
       </div>`;
     $("addNote").onclick=()=>{ const v=$("noteInput").value.trim(); if(!v) return; c.notes.unshift({t:v,w:"You",d:"Just now"}); openAccount(id); };
     bindRows();
-    show("account-detail","Account","Customer profile and history");
+    show("account-detail","Account","Customer profile and insights");
   }
 
   /* ---------- order detail ---------- */
