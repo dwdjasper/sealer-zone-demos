@@ -24,6 +24,7 @@
     if (current === "account") openAccount(true);
     if (current === "builder") renderBuilder();
     if (current === "checkout") renderCheckout();
+    if (document.getElementById("chatChips")) renderChatChrome();
   }
   document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
     lang = b.dataset.lang;
@@ -359,6 +360,104 @@
   $("openCart").onclick = openCart; $("closeCart").onclick = closeCart; scrim.onclick = closeCart;
   let tm; function toast(m) { const e = $("toast"); e.textContent = m; e.classList.add("show"); clearTimeout(tm); tm = setTimeout(() => e.classList.remove("show"), 1700); }
 
+  /* ---------------- bilingual assistant ---------------- */
+  const CHAT = {
+    en: {
+      title: "Sealer Zone Assistant", sub: "Ask in English or Portuguese",
+      placeholder: "Ask about coverage, products, hours…", send: "Send",
+      welcome: "Hi! I can work out how much product you need for a job, check prices and stock, or point you to the right floor system. Try “How much epoxy for 1500 sq ft?”",
+      chips: ["How much epoxy for 1500 sq ft?", "What do I need for a garage floor?", "Price of polyaspartic", "Store hours"],
+      greet: "Hey! How can I help — coverage math, a product price, or what you need for a job?",
+      hours: "The counter is open Mon–Fri, 7:30 AM–2:00 PM. You can place orders online any time and pick them up the next day.",
+      askArea: "Sure — how many square feet is the job?",
+      system: "Tell me the job — garage, showroom, or industrial — plus the square footage, and I'll size the whole system. You can also use the Floor System Builder.",
+      fallback: "I can help with product coverage (how much you need), prices, stock, store hours, and floor systems. What would you like to know?",
+      price: (p) => `${p.name} is ${money(cp(p))} per ${p.unit} at your contractor price (list ${money(p.price)}).`,
+      stock: (p) => p.stock === "out" ? `${p.name} is out of stock right now — I can suggest an alternative if you'd like.` : p.stock === "low" ? `${p.name} is in stock but running low — worth ordering soon.` : `Yes — ${p.name} is in stock and ready for pickup.`,
+      product: (p) => `${p.name} — ${p.blurb_en} It's ${money(cp(p))} per ${p.unit} at your price.`,
+      needProduct: (p, a, u) => `For ${a.toLocaleString()} sq ft you'll need about ${u} ${p.unit}${u > 1 ? "s" : ""} of ${p.name}. At your contractor price that's about ${money(cp(p) * u)}.`,
+      needSystem: (a, lines) => `A full garage floor at ${a.toLocaleString()} sq ft typically needs:\n${lines.map((l) => `• ${l.qty} × ${prod(l.sku).name}`).join("\n")}\nWant me to build the full list?`,
+      actAdd: "Add to order", actView: "View product", actBuilder: "Open System Builder", actAddSys: "Add whole system"
+    },
+    pt: {
+      title: "Assistente Sealer Zone", sub: "Pergunte em inglês ou português",
+      placeholder: "Pergunte sobre cobertura, produtos, horário…", send: "Enviar",
+      welcome: "Olá! Posso calcular quanto produto você precisa para um serviço, verificar preços e estoque, ou indicar o sistema de piso certo. Experimente “Quanto epóxi para 1500 pés²?”",
+      chips: ["Quanto epóxi para 1500 pés²?", "O que preciso para uma garagem?", "Preço do poliaspártico", "Horário da loja"],
+      greet: "Olá! Como posso ajudar — cálculo de cobertura, preço de um produto, ou o que você precisa para um serviço?",
+      hours: "O balcão abre de segunda a sexta, das 7:30 às 14:00. Você pode fazer pedidos online a qualquer hora e retirar no dia seguinte.",
+      askArea: "Claro — quantos pés quadrados tem o serviço?",
+      system: "Me diga o serviço — garagem, showroom ou industrial — e a metragem, que eu calculo o sistema inteiro. Você também pode usar o Montador de Sistema.",
+      fallback: "Posso ajudar com cobertura de produtos (quanto você precisa), preços, estoque, horário e sistemas de piso. O que você gostaria de saber?",
+      price: (p) => `${p.name} custa ${money(cp(p))} por ${p.unit} no seu preço de empreiteiro (tabela ${money(p.price)}).`,
+      stock: (p) => p.stock === "out" ? `${p.name} está esgotado no momento — posso sugerir uma alternativa.` : p.stock === "low" ? `${p.name} está em estoque, mas acabando — vale pedir logo.` : `Sim — ${p.name} está em estoque e pronto para retirada.`,
+      product: (p) => `${p.name} — ${p.blurb_pt} Custa ${money(cp(p))} por ${p.unit} no seu preço.`,
+      needProduct: (p, a, u) => `Para ${a.toLocaleString()} pés² você vai precisar de cerca de ${u} ${p.unit}${u > 1 ? "s" : ""} de ${p.name}. No seu preço de empreiteiro, fica em torno de ${money(cp(p) * u)}.`,
+      needSystem: (a, lines) => `Um piso de garagem completo com ${a.toLocaleString()} pés² geralmente precisa de:\n${lines.map((l) => `• ${l.qty} × ${prod(l.sku).name}`).join("\n")}\nQuer que eu monte a lista completa?`,
+      actAdd: "Adicionar ao pedido", actView: "Ver produto", actBuilder: "Abrir Montador", actAddSys: "Adicionar sistema"
+    }
+  };
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function detectLang(s) { return /(quanto|quantos|preciso|precisa|preço|preco|custa|galões|galao|garagem|galpão|galpao|estoque|horário|horario|retirada|olá|\bola\b|\boi\b|pés|pes|areia|selador|floco|demão|demao|epóxi|epoxi|quero|você|voce|qual|para que)/i.test(s) ? "pt" : null; }
+  function productFromText(s) {
+    const map = [[/armor|epoxy kit|100%|base coat|base epóxi/, "SZ-AC100"], [/primer/, "SZ-EP01"],
+      [/polyaspartic|poliaspárt|poliaspart|topcoat|verniz/, "SZ-PA70"], [/flake|floco/, "SZ-FLK25"],
+      [/densifier|densific|lítio|litio/, "SZ-DEN20"], [/wetlook|wet look|acrylic|acrílic|acrilic/, "SZ-WL100"],
+      [/aquaseal|penetrat|penetrante/, "SZ-AS5000"], [/degreaser|desengord/, "SZ-DEG01"],
+      [/efflor|eflores/, "SZ-EFF01"], [/\betch\b|prep|preparad/, "SZ-ETCH"], [/squeegee|rodo/, "SZ-SQGE"],
+      [/roller|rolo/, "SZ-ROLL"], [/sand|areia/, "SZ-PSG50"], [/epoxy|epóxi|epoxi/, "SZ-AC100"], [/sealer|selador/, "SZ-AS5000"]];
+    for (const [re, sku] of map) { if (re.test(s)) return prod(sku); }
+    return null;
+  }
+  function chatReply(raw) {
+    const L = detectLang(raw) || lang, R = CHAT[L], s = raw.toLowerCase();
+    const num = (s.replace(/,/g, "").match(/(\d+(\.\d+)?)/) || [])[1];
+    const sqft = num ? parseFloat(num) : null;
+    const p = productFromText(s);
+    if (/^(hi|hello|hey|good morning|olá|ola|oi|bom dia|boa tarde|boa noite)\b/.test(s)) return { text: R.greet };
+    if (/(hour|open|pickup|pick up|when.*(open|closed)|horário|horario|aberto|retirada|quando)/.test(s)) return { text: R.hours };
+    if (/(price|cost|how much is|how much are|preç|preco|custa|valor)/.test(s) && p) return { text: R.price(p) };
+    if (/(stock|available|in stock|do you have|estoque|dispon|tem em|têm)/.test(s) && p) return { text: R.stock(p) };
+    if (/(how much|how many|need|cover|coverage|quant|precis|cobr|galõe|galoe|\bkit|demão|demao)/.test(s)) {
+      if (!sqft) {
+        if (/(garage|showroom|warehouse|industrial|floor|system|garagem|galpão|galpao|piso|sistema)/.test(s)) return { text: R.system, actions: [{ label: R.actBuilder, fn: () => { go("builder"); closeChat(); } }] };
+        return { text: R.askArea };
+      }
+      if (p && p.coverage) { const u = Math.ceil(sqft / p.coverage); return { text: R.needProduct(p, sqft, u), actions: [{ label: R.actAdd, fn: () => { addToCart(p.sku, u, true); toast(t("added")); openCart(); } }, { label: R.actView, fn: () => openDetail(p.sku) }] }; }
+      const sys = SYSTEMS[0], lines = bom(sys, sqft);
+      return { text: R.needSystem(sqft, lines), actions: [{ label: R.actBuilder, fn: () => { builder.sqft = sqft; go("builder"); closeChat(); } }, { label: R.actAddSys, fn: () => { lines.forEach((l) => addToCart(l.sku, l.qty, true)); toast(t("added")); openCart(); } }] };
+    }
+    if (/(garage|showroom|warehouse|industrial|system|floor|recommend|garagem|galpão|galpao|sistema|piso|recomend)/.test(s)) return { text: R.system, actions: [{ label: R.actBuilder, fn: () => { go("builder"); closeChat(); } }] };
+    if (p) return { text: R.product(p), actions: [{ label: R.actView, fn: () => openDetail(p.sku) }] };
+    return { text: R.fallback };
+  }
+  function addChatMsg(who, html, actions) {
+    const wrap = document.createElement("div"); wrap.className = "cmsg " + who;
+    wrap.innerHTML = `<div class="bub">${html}</div>`;
+    if (actions && actions.length) { const a = document.createElement("div"); a.className = "cacts"; actions.forEach((ac) => { const b = document.createElement("button"); b.className = "cchip"; b.textContent = ac.label; b.onclick = ac.fn; a.appendChild(b); }); wrap.appendChild(a); }
+    $("chatMsgs").appendChild(wrap); $("chatMsgs").scrollTop = $("chatMsgs").scrollHeight;
+  }
+  function chatSend(text) {
+    if (!text.trim()) return; addChatMsg("me", esc(text)); $("chatInput").value = "";
+    const r = chatReply(text);
+    setTimeout(() => addChatMsg("bot", r.text.replace(/\n/g, "<br>"), r.actions), 260);
+  }
+  function renderChatChrome() {
+    const R = CHAT[lang];
+    $("chatTitle").textContent = R.title; $("chatSub").textContent = R.sub; $("chatInput").placeholder = R.placeholder;
+    const chips = $("chatChips"); chips.innerHTML = "";
+    R.chips.forEach((c) => { const b = document.createElement("button"); b.className = "qc"; b.textContent = c; b.onclick = () => chatSend(c); chips.appendChild(b); });
+  }
+  let chatSeeded = false;
+  function openChat() { $("chatPanel").classList.add("show"); $("chatFab").style.display = "none"; if (!chatSeeded) { addChatMsg("bot", CHAT[lang].welcome); chatSeeded = true; } $("chatInput").focus(); }
+  function closeChat() { $("chatPanel").classList.remove("show"); $("chatFab").style.display = ""; }
+  function initChat() {
+    renderChatChrome();
+    $("chatFab").onclick = openChat; $("chatClose").onclick = closeChat;
+    $("chatSendBtn").onclick = () => chatSend($("chatInput").value);
+    $("chatInput").addEventListener("keydown", (e) => { if (e.key === "Enter") chatSend($("chatInput").value); });
+  }
+
   /* ---------------- init ---------------- */
-  applyI18n(); calc();
+  applyI18n(); calc(); initChat();
 })();
