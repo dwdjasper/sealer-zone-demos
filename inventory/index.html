@@ -10,25 +10,14 @@
 <link rel="stylesheet" href="../assets/brand.css">
 <style>
   .demo-flag { background: var(--amber-soft); color: var(--amber); text-align: center; font-size: .76rem; font-weight: 600; padding: .35rem; }
-
-  .alert-card { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: var(--radius-sm);
-    padding: .85rem 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; box-shadow: var(--shadow-sm); }
+  .alert-card { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: var(--radius-sm); padding: .85rem 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; box-shadow: var(--shadow-sm); }
   .alert-card.out { border-left-color: var(--red); }
-  .alert-card .ai { flex: 1; }
-  .alert-card .an { font-weight: 600; font-size: .92rem; }
-  .alert-card .ad { font-size: .78rem; color: var(--slate-500); margin-top: .1rem; }
-  .alert-card .sug { text-align: right; }
-  .alert-card .sug .q { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
-  .alert-card .sug .ql { font-size: .7rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: .04em; }
-
-  .stockbar { width: 130px; }
-  .stockbar .track { height: 7px; border-radius: 999px; background: var(--line); position: relative; overflow: visible; }
-  .stockbar .fill { height: 100%; border-radius: 999px; }
-  .stockbar .rp { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--slate-700); }
-  .legend { display: flex; gap: 1.2rem; font-size: .76rem; color: var(--slate-500); margin-top: .5rem; }
-  .legend span { display: inline-flex; align-items: center; gap: .35rem; }
-  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
-
+  .alert-card .ai { flex: 1; } .alert-card .an { font-weight: 600; font-size: .92rem; } .alert-card .ad { font-size: .78rem; color: var(--slate-500); margin-top: .1rem; }
+  .alert-card .sug { text-align: right; } .alert-card .sug .q { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; } .alert-card .sug .ql { font-size: .7rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: .04em; }
+  .stockbar { width: 130px; } .stockbar .track { height: 7px; border-radius: 999px; background: var(--line); position: relative; }
+  .stockbar .fill { height: 100%; border-radius: 999px; } .stockbar .rp { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--slate-700); }
+  .legend { display: flex; gap: 1.2rem; font-size: .76rem; color: var(--slate-500); margin-top: .5rem; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: .35rem; } .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
   .chart { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-sm); }
   .chart h3 { font-size: 1rem; margin-bottom: 1rem; }
   .bars { display: flex; flex-direction: column; gap: .6rem; }
@@ -38,29 +27,27 @@
   .seg button { border: none; background: transparent; padding: .4rem .8rem; border-radius: 7px; font-size: .84rem; font-weight: 600; color: var(--slate-600); }
   .seg button.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
   .hide { display: none; }
-  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
-  @media (max-width: 1000px){ .twocol { grid-template-columns: 1fr; } }
   .po-btn { white-space: nowrap; }
-  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink);
-    color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .85rem; font-weight: 600; opacity: 0; pointer-events: none;
-    transition: opacity .2s, transform .2s; z-index: 60; box-shadow: var(--shadow-lg); }
+  .search { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--line); border-radius: 9px; padding: .5rem .8rem; background: #fff; width: 240px; }
+  .search input { border: none; outline: none; font-size: .88rem; width: 100%; font-family: inherit; }
+  .spark.big { height: 70px; gap: 5px; }
+  .recv-row { display: grid; grid-template-columns: 1fr 120px; align-items: center; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line-soft); }
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .85rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 60; box-shadow: var(--shadow-lg); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .po-panel { position: sticky; top: 80px; }
 </style>
 </head>
 <body>
 <div class="demo-flag">Interactive demo · Sealer Zone inventory concept</div>
 <div class="shell">
   <aside class="sidebar">
-    <div class="brand">
-      <div class="mark">SZ</div>
-      <div class="name">Sealer Zone<small>Inventory</small></div>
-    </div>
+    <div class="brand"><div class="mark">SZ</div><div class="name">Sealer Zone<small>Inventory</small></div></div>
     <a class="nav-item active" data-view="dash"><span class="ico">▦</span> Overview</a>
     <a class="nav-item" data-view="stock"><span class="ico">▤</span> All stock</a>
-    <a class="nav-item" data-view="reorder"><span class="ico">⚠</span> Reorder
-      <span class="badge badge-amber" id="reorderPill" style="margin-left:auto"></span></a>
+    <a class="nav-item" data-view="reorder"><span class="ico">⚠</span> Reorder <span class="badge badge-amber" id="reorderPill" style="margin-left:auto"></span></a>
+    <a class="nav-item" data-view="forecast"><span class="ico">📈</span> Forecast</a>
+    <a class="nav-item" data-view="receive"><span class="ico">⇄</span> Receive shipment</a>
     <div class="nav-label">Soon</div>
-    <a class="nav-item" style="opacity:.5"><span class="ico">⇄</span> Receiving</a>
     <a class="nav-item" style="opacity:.5"><span class="ico">⚙</span> Settings</a>
     <div class="spacer"></div>
     <div class="who"><div class="av">SZ</div><div class="meta">Warehouse<small>Sealer Zone</small></div></div>
@@ -75,7 +62,6 @@
         <button data-view="reorder">Reorder</button>
       </div>
     </div>
-
     <div class="content">
       <!-- DASHBOARD -->
       <section id="view-dash">
@@ -85,39 +71,54 @@
           <div class="stat"><div class="accent-bar" style="background:var(--red)"></div><div class="label">Out of stock</div><div class="value tnum" id="kOut" style="color:var(--red)">—</div><div class="trend muted">empty shelves</div></div>
           <div class="stat"><div class="accent-bar"></div><div class="label">Inventory value</div><div class="value tnum" id="kVal">—</div><div class="trend muted">at cost</div></div>
         </div>
-
         <div class="sec-head"><div><div class="eyebrow" style="color:var(--amber)">Action needed</div><h2>Reorder before you run out</h2></div>
-          <button class="btn btn-dark btn-sm" id="poAll">Generate purchase order</button></div>
+          <button class="btn btn-ghost btn-sm" data-view="receive">⇄ Receive shipment</button></div>
         <div id="alertList"></div>
-
         <div class="sec-head"><div><div class="eyebrow">Demand</div><h2>Fastest movers (units / week)</h2></div></div>
         <div class="chart"><div class="bars" id="velChart"></div></div>
       </section>
 
       <!-- ALL STOCK -->
       <section id="view-stock" class="hide">
-        <div class="table-wrap">
-          <table class="data">
-            <thead><tr><th>Item</th><th>Category</th><th>Stock level</th><th class="t-right">On hand</th><th class="t-right">Velocity</th><th class="t-right">Weeks left</th><th>Status</th></tr></thead>
-            <tbody id="stockRows"></tbody>
-          </table>
+        <div class="filterbar">
+          <div class="search"><span class="muted">⌕</span><input id="stockSearch" placeholder="Search item or SKU…"></div>
+          <span class="selectish">Category <select id="fCat"><option value="">All</option></select></span>
+          <span class="selectish">Status <select id="fStatus"><option value="">All</option><option value="ok">Healthy</option><option value="low">Low</option><option value="out">Out</option></select></span>
+          <span class="muted" style="font-size:.85rem;margin-left:auto" id="stockCount"></span>
         </div>
+        <div class="table-wrap"><table class="data wide">
+          <thead><tr><th>Item</th><th>Category</th><th>Stock level</th><th class="t-right">On hand</th><th class="t-right">Velocity</th><th class="t-right">Weeks left</th><th>Status</th><th></th></tr></thead>
+          <tbody id="stockRows"></tbody></table></div>
         <div class="legend">
-          <span><i style="background:var(--green)"></i> Healthy</span>
-          <span><i style="background:var(--amber)"></i> Low — below reorder point</span>
-          <span><i style="background:var(--red)"></i> Out of stock</span>
-          <span><i style="background:var(--slate-700)"></i> ▏ reorder point</span>
+          <span><i style="background:var(--green)"></i> Healthy</span><span><i style="background:var(--amber)"></i> Low — below reorder point</span>
+          <span><i style="background:var(--red)"></i> Out of stock</span><span><i style="background:var(--slate-700)"></i> ▏ reorder point</span></div>
+      </section>
+
+      <!-- REORDER + PO BUILDER -->
+      <section id="view-reorder" class="hide">
+        <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap">
+          <div style="flex:1.5;min-width:340px">
+            <div class="muted" style="font-size:.85rem;margin-bottom:1rem">Suggested quantities keep ~4 weeks of cover based on recent sell-through. Add items to build a purchase order.</div>
+            <div id="alertList2"></div>
+          </div>
+          <div style="flex:1;min-width:280px">
+            <div class="card po-panel" style="padding:1.2rem 1.3rem">
+              <div class="row between center" style="margin-bottom:.4rem"><h3 style="font-size:1rem">Draft purchase order</h3><span class="badge badge-teal" id="poCount">0</span></div>
+              <div id="poItems"></div>
+              <div id="poFoot"></div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- REORDER -->
-      <section id="view-reorder" class="hide">
-        <div class="row between center" style="margin-bottom:1rem">
-          <div class="muted" style="font-size:.85rem">Suggested quantities keep ~${'4'} weeks of cover based on recent sell-through.</div>
-          <button class="btn btn-dark btn-sm" id="poAll2">Generate purchase order</button>
-        </div>
-        <div id="alertList2"></div>
-      </section>
+      <!-- RECEIVE SHIPMENT -->
+      <section id="view-receive" class="hide"><div id="receiveBody"></div></section>
+
+      <!-- FORECAST -->
+      <section id="view-forecast" class="hide"></section>
+
+      <!-- SKU DETAIL -->
+      <section id="view-sku" class="hide"></section>
     </div>
   </div>
 </div>
@@ -128,111 +129,254 @@
 (function(){
   "use strict";
   const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0});
-  const statusOf = it => it.onHand===0 ? "out" : (it.onHand <= it.reorder ? "low" : "ok");
-  const weeksLeft = it => it.vel>0 ? (it.onHand/it.vel) : Infinity;
-  const suggested = it => Math.max(0, Math.ceil(it.vel*TARGET_WEEKS) - it.onHand);
+  const $ = id => document.getElementById(id);
+  const itemBy = sku => STOCK.find(i=>i.sku===sku);
+  const statusOf = it => it.onHand===0?"out":(it.onHand<=it.reorder?"low":"ok");
+  const weeksLeft = it => it.vel>0?(it.onHand/it.vel):Infinity;
+  const suggested = it => Math.max(0, Math.ceil(it.vel*TARGET_WEEKS)-it.onHand);
+  const statusColor = s => s==="out"?"var(--red)":s==="low"?"var(--amber)":"var(--green)";
+  const PO = {}; // sku -> qty
 
   function kpis(){
-    document.getElementById("kSku").textContent = STOCK.length;
-    document.getElementById("kLow").textContent = STOCK.filter(i=>statusOf(i)==="low").length;
-    document.getElementById("kOut").textContent = STOCK.filter(i=>statusOf(i)==="out").length;
-    const val = STOCK.reduce((a,i)=>a+i.onHand*i.cost,0);
-    document.getElementById("kVal").textContent = money(val);
-    const needs = STOCK.filter(i=>statusOf(i)!=="ok").length;
-    document.getElementById("reorderPill").textContent = needs;
+    $("kSku").textContent=STOCK.length;
+    $("kLow").textContent=STOCK.filter(i=>statusOf(i)==="low").length;
+    $("kOut").textContent=STOCK.filter(i=>statusOf(i)==="out").length;
+    $("kVal").textContent=money(STOCK.reduce((a,i)=>a+i.onHand*i.cost,0));
+    $("reorderPill").textContent=STOCK.filter(i=>statusOf(i)!=="ok").length;
   }
-
-  function statusBadge(s){
-    if(s==="out") return '<span class="badge badge-red"><span class="dot"></span>Out</span>';
-    if(s==="low") return '<span class="badge badge-amber"><span class="dot"></span>Low</span>';
-    return '<span class="badge badge-green"><span class="dot"></span>Healthy</span>';
-  }
+  function statusBadge(s){ return s==="out"?'<span class="badge badge-red"><span class="dot"></span>Out</span>':s==="low"?'<span class="badge badge-amber"><span class="dot"></span>Low</span>':'<span class="badge badge-green"><span class="dot"></span>Healthy</span>'; }
   function stockBar(it){
-    const s = statusOf(it);
-    const color = s==="out"?"var(--red)":s==="low"?"var(--amber)":"var(--green)";
-    const scaleMax = Math.max(it.reorder*2, it.onHand, 1);
-    const fillPct = Math.min(100, it.onHand/scaleMax*100);
-    const rpPct = Math.min(100, it.reorder/scaleMax*100);
-    return `<div class="stockbar"><div class="track">
-      <div class="fill" style="width:${fillPct}%;background:${color}"></div>
-      <div class="rp" style="left:${rpPct}%"></div></div></div>`;
+    const s=statusOf(it), color=statusColor(s), scaleMax=Math.max(it.reorder*2,it.onHand,1);
+    return `<div class="stockbar"><div class="track"><div class="fill" style="width:${Math.min(100,it.onHand/scaleMax*100)}%;background:${color}"></div><div class="rp" style="left:${Math.min(100,it.reorder/scaleMax*100)}%"></div></div></div>`;
+  }
+  function alertItems(){ return STOCK.filter(i=>statusOf(i)!=="ok").sort((a,b)=>(statusOf(a)==="out"?-1:0)-(statusOf(b)==="out"?-1:0)||weeksLeft(a)-weeksLeft(b)); }
+
+  function renderAlerts(targetId,withAdd){
+    $(targetId).innerHTML=alertItems().map(it=>{
+      const s=statusOf(it), wl=weeksLeft(it);
+      const sub=s==="out"?"Out of stock — losing sales now":`${it.onHand} ${it.unit} left · ~${wl.toFixed(1)} weeks at current sell-through`;
+      return `<div class="alert-card ${s==='out'?'out':''}">
+        <div class="ai"><div class="an">${it.name} <span class="muted" style="font-weight:400;font-size:.78rem">· ${it.sku}</span></div><div class="ad">${sub}</div></div>
+        <div class="sug"><div class="q">+${suggested(it)}</div><div class="ql">suggested ${it.unit}s</div></div>
+        <button class="btn ${withAdd?'btn-primary':'btn-ghost'} btn-sm po-btn" data-addpo="${it.sku}">${withAdd?'Add to PO':'View'}</button></div>`;
+    }).join("");
+    $(targetId).querySelectorAll("[data-addpo]").forEach(b=>b.onclick=()=>{ const it=itemBy(b.dataset.addpo); PO[it.sku]=(PO[it.sku]||0)+suggested(it); renderPO(); toast("Added to draft PO"); });
   }
 
-  /* alerts (low + out), worst first */
-  function alertItems(){
-    return STOCK.filter(i=>statusOf(i)!=="ok")
-      .sort((a,b)=> (statusOf(a)==="out"?-1:0) - (statusOf(b)==="out"?-1:0) || weeksLeft(a)-weeksLeft(b));
-  }
-  function renderAlerts(targetId){
-    const items = alertItems();
-    document.getElementById(targetId).innerHTML = items.map(it=>{
-      const s = statusOf(it);
-      const wl = weeksLeft(it);
-      const sub = s==="out" ? "Out of stock — losing sales now" :
-        `${it.onHand} ${it.unit} left · ~${wl.toFixed(1)} weeks at current sell-through`;
-      return `<div class="alert-card ${s==='out'?'out':''}">
-        <div class="ai"><div class="an">${it.name} <span class="muted" style="font-weight:400;font-size:.78rem">· ${it.sku}</span></div>
-          <div class="ad">${sub}</div></div>
-        <div class="sug"><div class="q">+${suggested(it)}</div><div class="ql">suggested ${it.unit}s</div></div>
-        <button class="btn btn-primary btn-sm po-btn">Add to PO</button>
-      </div>`;
-    }).join("");
-    document.querySelectorAll(`#${targetId} .po-btn`).forEach(b=>b.onclick=()=>toast("Added to draft purchase order"));
+  function renderPO(){
+    const entries=Object.entries(PO);
+    $("poCount").textContent=entries.reduce((a,[,q])=>a+q,0);
+    if(!entries.length){ $("poItems").innerHTML='<div class="muted" style="font-size:.85rem;padding:.6rem 0">No items yet. Add from the list at left.</div>'; $("poFoot").innerHTML=""; return; }
+    let cost=0;
+    $("poItems").innerHTML=entries.map(([sku,q])=>{ const it=itemBy(sku); cost+=it.cost*q; return `<div class="row between center" style="padding:.5rem 0;border-bottom:1px solid var(--line-soft)"><div><div class="strong" style="font-size:.86rem">${it.name}</div><div class="muted" style="font-size:.74rem">${it.supplier}</div></div><div class="row center" style="gap:.5rem"><div class="qtybox" style="display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden"><button data-po-d="-1" data-sku="${sku}" style="border:none;background:#fff;width:24px;height:26px">−</button><span style="min-width:26px;text-align:center;font-size:.84rem;font-weight:600;line-height:26px">${q}</span><button data-po-d="1" data-sku="${sku}" style="border:none;background:#fff;width:24px;height:26px">+</button></div></div></div>`; }).join("");
+    $("poFoot").innerHTML=`<div class="row between" style="margin-top:.8rem;font-size:.9rem"><span class="muted">Est. cost</span><span class="strong tnum">${money(cost)}</span></div><button class="btn btn-primary" style="width:100%;margin-top:.8rem" id="submitPO">Submit purchase order</button>`;
+    $("poItems").querySelectorAll("[data-po-d]").forEach(b=>b.onclick=()=>{ const s=b.dataset.sku; PO[s]=(PO[s]||0)+parseInt(b.dataset.poD,10); if(PO[s]<=0) delete PO[s]; renderPO(); });
+    $("submitPO").onclick=()=>{ const n=Object.keys(PO).length; for(const k in PO) delete PO[k]; renderPO(); toast("Purchase order submitted for "+n+" items"); };
   }
 
   function velChart(){
-    const rows = [...STOCK].sort((a,b)=>b.vel-a.vel).slice(0,8);
-    const max = rows[0].vel;
-    document.getElementById("velChart").innerHTML = rows.map(it=>`
-      <div class="barrow">
-        <span class="strong" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.name}</span>
-        <div class="bt" style="width:${Math.max(6,it.vel/max*100)}%;background:${statusOf(it)==='ok'?'var(--teal)':statusOf(it)==='low'?'var(--amber)':'var(--red)'}"></div>
-        <span class="t-right tnum strong">${it.vel.toFixed(1)}</span>
-      </div>`).join("");
+    const rows=[...STOCK].sort((a,b)=>b.vel-a.vel).slice(0,8); const max=rows[0].vel;
+    $("velChart").innerHTML=rows.map(it=>`<div class="barrow"><span class="strong" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.name}</span><div class="bt" style="width:${Math.max(6,it.vel/max*100)}%;background:${statusColor(statusOf(it))}"></div><span class="t-right tnum strong">${it.vel.toFixed(1)}</span></div>`).join("");
   }
 
+  /* ---------- all stock (filterable) ---------- */
+  function fillCats(){ $("fCat").innerHTML='<option value="">All</option>'+CATS.map(c=>`<option>${c}</option>`).join(""); }
   function stockTable(){
-    const rows = [...STOCK].sort((a,b)=>{
-      const order={out:0,low:1,ok:2}; return order[statusOf(a)]-order[statusOf(b)] || weeksLeft(a)-weeksLeft(b);
-    });
-    document.getElementById("stockRows").innerHTML = rows.map(it=>{
-      const wl = weeksLeft(it);
-      const wlTxt = wl===Infinity ? "—" : wl.toFixed(1);
-      const wlColor = wl<2 ? "color:var(--red);font-weight:600" : wl<4 ? "color:var(--amber);font-weight:600" : "";
-      return `<tr>
-        <td><div class="strong">${it.name}</div><div class="muted" style="font-size:.74rem">${it.sku}</div></td>
-        <td class="muted">${it.cat}</td>
-        <td>${stockBar(it)}</td>
-        <td class="t-right tnum strong">${it.onHand}</td>
-        <td class="t-right tnum muted">${it.vel.toFixed(1)}/wk</td>
-        <td class="t-right tnum" style="${wlColor}">${wlTxt}</td>
-        <td>${statusBadge(statusOf(it))}</td>
-      </tr>`;
-    }).join("");
+    const q=$("stockSearch").value.toLowerCase(), cat=$("fCat").value, st=$("fStatus").value;
+    let rows=STOCK.filter(i=>(i.name+i.sku).toLowerCase().includes(q));
+    if(cat) rows=rows.filter(i=>i.cat===cat);
+    if(st) rows=rows.filter(i=>statusOf(i)===st);
+    rows=[...rows].sort((a,b)=>{const o={out:0,low:1,ok:2};return o[statusOf(a)]-o[statusOf(b)]||weeksLeft(a)-weeksLeft(b);});
+    $("stockCount").textContent=rows.length+" items";
+    $("stockRows").innerHTML=rows.map(it=>{ const wl=weeksLeft(it), wlTxt=wl===Infinity?"—":wl.toFixed(1), wlColor=wl<2?"color:var(--red);font-weight:600":wl<4?"color:var(--amber);font-weight:600":"";
+      return `<tr class="clickable" data-sku="${it.sku}"><td><div class="strong">${it.name}</div><div class="muted" style="font-size:.74rem">${it.sku}</div></td><td class="muted">${it.cat}</td><td>${stockBar(it)}</td><td class="t-right tnum strong">${it.onHand}</td><td class="t-right tnum muted">${it.vel.toFixed(1)}/wk</td><td class="t-right tnum" style="${wlColor}">${wlTxt}</td><td>${statusBadge(statusOf(it))}</td><td class="t-right chevron">›</td></tr>`; }).join("");
+    $("stockRows").querySelectorAll("[data-sku]").forEach(r=>r.onclick=()=>openSku(r.dataset.sku));
+  }
+  ["stockSearch","fCat","fStatus"].forEach(id=>$(id).addEventListener("input",stockTable));
+
+  /* ---------- SKU detail ---------- */
+  function openSku(sku){
+    const it=itemBy(sku); if(!it) return; const s=statusOf(it), wl=weeksLeft(it);
+    const tmax=Math.max(...it.trend);
+    const trend=`<div class="spark big">${it.trend.map((v,i)=>`<span class="${i===it.trend.length-1?'hi':''}" style="height:${Math.max(8,v/tmax*100)}%"></span>`).join("")}</div>`;
+    const log=it.log.map(l=>{ const pos=l[1].startsWith("+"); const col=l[0]==="Received"?"var(--green)":l[0]==="Stockout"?"var(--red)":"var(--slate-700)";
+      return `<tr><td><span class="badge ${l[0]==='Received'?'badge-green':l[0]==='Stockout'?'badge-red':'badge-slate'}">${l[0]}</span></td><td class="t-right tnum strong" style="color:${pos?'var(--green)':'inherit'}">${l[1]}</td><td class="t-right muted">${l[2]}</td></tr>`; }).join("");
+    $("view-sku").innerHTML=`
+      <button class="backlink" data-view="stock">← Back to stock</button>
+      <div class="detail-head"><div><div class="detail-title">${it.name}</div><div class="detail-sub">${it.sku} · ${it.cat}</div><div style="margin-top:.5rem">${statusBadge(s)}</div></div>
+        <div style="text-align:right"><div class="muted" style="font-size:.76rem">On hand</div><div style="font-family:var(--font-display);font-weight:600;font-size:2rem;color:${statusColor(s)}">${it.onHand} <span style="font-size:1rem;color:var(--slate-400)">${it.unit}</span></div></div></div>
+      <div class="stat-grid" style="margin-bottom:1.6rem">
+        <div class="stat"><div class="accent-bar"></div><div class="label">Reorder point</div><div class="value tnum">${it.reorder}</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Velocity</div><div class="value tnum">${it.vel.toFixed(1)}<span style="font-size:1rem;color:var(--slate-400)">/wk</span></div></div>
+        <div class="stat"><div class="accent-bar" style="background:${wl<4?'var(--amber)':'var(--teal)'}"></div><div class="label">Weeks of cover</div><div class="value tnum" style="${wl<2?'color:var(--red)':''}">${wl===Infinity?'—':wl.toFixed(1)}</div></div>
+        <div class="stat"><div class="accent-bar"></div><div class="label">Stock value</div><div class="value tnum">${money(it.onHand*it.cost)}</div></div>
+      </div>
+      <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1.4;min-width:320px">
+          <div class="sec-head"><div><div class="eyebrow">Demand</div><h2>8-week velocity</h2></div></div>
+          <div class="card" style="padding:1.2rem 1.3rem">${trend}<div class="muted" style="font-size:.75rem;margin-top:.6rem">Units sold per week (most recent at right)</div></div>
+          <div class="sec-head"><div><div class="eyebrow">Activity</div><h2>Movement log</h2></div></div>
+          <div class="table-wrap"><table class="data"><thead><tr><th>Type</th><th class="t-right">Change</th><th class="t-right">Date</th></tr></thead><tbody>${log}</tbody></table></div>
+        </div>
+        <div style="flex:1;min-width:250px">
+          <div class="sec-head"><div><div class="eyebrow">Supplier</div><h2>Source</h2></div></div>
+          <div class="card" style="padding:1.1rem 1.2rem">
+            <div class="strong">${it.supplier}</div><div class="muted" style="font-size:.82rem;margin-top:.2rem">Lead time: ${it.lead}</div>
+            <div class="spec-list" style="margin-top:.9rem"><div class="spec"><span class="k">Unit cost</span><span class="v">${money(it.cost)}</span></div><div class="spec"><span class="k">Suggested reorder</span><span class="v">+${suggested(it)} ${it.unit}</span></div></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:1rem" data-addpo-sku="${it.sku}">Add ${suggested(it)} to purchase order</button>
+          </div>
+          <div class="card" style="padding:1.1rem 1.2rem;margin-top:1rem">
+            <div class="field-label">Adjust on-hand count</div>
+            <div class="row center" style="gap:.5rem"><input class="inp" id="adjInput" type="number" value="${it.onHand}" style="width:90px"><button class="btn btn-ghost btn-sm" id="adjBtn">Update</button></div>
+            <div class="muted" style="font-size:.74rem;margin-top:.5rem">Use after a physical count.</div>
+          </div>
+        </div>
+      </div>`;
+    $("view-sku").querySelector("[data-addpo-sku]").onclick=()=>{ PO[it.sku]=(PO[it.sku]||0)+suggested(it); renderPO(); toast("Added to draft PO"); };
+    $("adjBtn").onclick=()=>{ const v=parseInt($("adjInput").value,10); if(!isNaN(v)&&v>=0){ const diff=v-it.onHand; it.onHand=v; it.log.unshift(["Adjusted",(diff>=0?"+":"")+diff,"Just now"]); kpis(); openSku(sku); toast("Stock count updated"); } };
+    show("sku",it.name,it.sku);
   }
 
-  /* toast */
-  let tm; function toast(m){ const e=document.getElementById("toast"); e.textContent=m; e.classList.add("show"); clearTimeout(tm); tm=setTimeout(()=>e.classList.remove("show"),1700); }
-  document.getElementById("poAll").onclick = ()=>toast("Draft PO created for "+alertItems().length+" items");
-  document.getElementById("poAll2").onclick = ()=>toast("Draft PO created for "+alertItems().length+" items");
+  /* ---------- receive shipment (multi-step) ---------- */
+  const receive={ step:1, qty:{} };
+  function stepper(step){ const labels=["Select items","Review","Done"]; return `<div class="steps">${labels.map((l,i)=>{const n=i+1,cls=step===n?"on":step>n?"done":"";return `<div class="s ${cls}"><span class="n">${step>n?"✓":n}</span>${l}</div>${i<2?'<span class="bar"></span>':''}`;}).join("")}</div>`; }
+  function renderReceive(){
+    const body=$("receiveBody");
+    if(receive.step===1){
+      const lowFirst=[...STOCK].sort((a,b)=>{const o={out:0,low:1,ok:2};return o[statusOf(a)]-o[statusOf(b)];});
+      body.innerHTML=`${stepper(1)}<h2 style="margin-bottom:.3rem">Receive a shipment</h2><div class="muted" style="font-size:.85rem;margin-bottom:1.2rem">Enter the quantity received for each item. Low and out-of-stock items are pre-filled with the suggested reorder.</div>
+        <div class="card" style="padding:.4rem 1.2rem 1rem">
+        ${lowFirst.map(it=>{const pre=statusOf(it)!=="ok"?suggested(it):(receive.qty[it.sku]||0);return `<div class="recv-row"><div><div class="strong" style="font-size:.9rem">${it.name} ${statusOf(it)!=='ok'?statusBadge(statusOf(it)):''}</div><div class="muted" style="font-size:.76rem">${it.sku} · on hand ${it.onHand} ${it.unit}</div></div><input class="inp" type="number" min="0" data-recv="${it.sku}" value="${pre}"></div>`;}).join("")}
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:1.2rem"><button class="btn btn-primary" id="recvReview">Review →</button></div>`;
+      body.querySelectorAll("[data-recv]").forEach(inp=>inp.addEventListener("input",()=>receive.qty[inp.dataset.recv]=parseInt(inp.value,10)||0));
+      body.querySelectorAll("[data-recv]").forEach(inp=>receive.qty[inp.dataset.recv]=parseInt(inp.value,10)||0);
+      $("recvReview").onclick=()=>{ receive.step=2; renderReceive(); };
+    } else if(receive.step===2){
+      const items=Object.entries(receive.qty).filter(([,q])=>q>0);
+      body.innerHTML=`${stepper(2)}<h2 style="margin-bottom:1rem">Confirm received quantities</h2>
+        ${items.length?`<div class="table-wrap"><table class="data"><thead><tr><th>Item</th><th class="t-right">On hand</th><th class="t-right">Receiving</th><th class="t-right">New total</th></tr></thead><tbody>
+        ${items.map(([sku,q])=>{const it=itemBy(sku);return `<tr><td class="strong">${it.name}</td><td class="t-right tnum muted">${it.onHand}</td><td class="t-right tnum" style="color:var(--green);font-weight:600">+${q}</td><td class="t-right tnum strong">${it.onHand+q}</td></tr>`;}).join("")}
+        </tbody></table></div>`:'<div class="empty">No quantities entered.</div>'}
+        <div style="display:flex;justify-content:space-between;margin-top:1.2rem"><button class="btn btn-ghost" id="recvBack">← Back</button><button class="btn btn-primary" id="recvConfirm" ${items.length?"":"disabled style=opacity:.5"}>Confirm receipt</button></div>`;
+      $("recvBack").onclick=()=>{ receive.step=1; renderReceive(); };
+      if(items.length) $("recvConfirm").onclick=()=>{ items.forEach(([sku,q])=>{const it=itemBy(sku);it.onHand+=q;it.log.unshift(["Received","+"+q,"Just now"]);}); receive.step=3; renderReceive(); kpis(); };
+    } else {
+      const n=Object.values(receive.qty).filter(q=>q>0).reduce((a,q)=>a+q,0);
+      body.innerHTML=`${stepper(3)}<div class="conf" style="text-align:center;padding:2.5rem 1rem">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--teal-soft);color:var(--teal-dark);display:grid;place-items:center;font-size:1.9rem;margin:0 auto 1.1rem">✓</div>
+        <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:600">Shipment received</div>
+        <div class="muted" style="max-width:36ch;margin:.5rem auto 1.2rem">${n} units added to stock and logged. Reorder alerts have been updated.</div>
+        <button class="btn btn-ghost" id="recvDone">Back to overview</button></div>`;
+      receive.qty={};
+      $("recvDone").onclick=()=>{ receive.step=1; setView("dash"); };
+    }
+  }
 
-  /* views */
-  const titles = { dash:["Inventory overview","Live stock health and reorder signals"],
-    stock:["All stock","Every tracked SKU and its velocity"],
-    reorder:["Reorder","Suggested purchase quantities"] };
-  function setView(v){
-    ["dash","stock","reorder"].forEach(x=>document.getElementById("view-"+x).classList.toggle("hide", x!==v));
+  function toast(m){ const e=$("toast"); e.textContent=m; e.classList.add("show"); clearTimeout(window._tt); window._tt=setTimeout(()=>e.classList.remove("show"),1700); }
+
+  /* ---------- forecasting ---------- */
+  const TODAY = new Date(2026,5,30);
+  const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function addWeeks(d,w){ const x=new Date(d); x.setDate(x.getDate()+Math.round(w*7)); return x; }
+  function fmtDate(d){ return MON[d.getMonth()]+" "+d.getDate(); }
+  function leadWeeks(it){ const m=/(\d+)/.exec(it.lead); return m?parseInt(m[1],10)/7:1; }
+  // gentle seasonal lift over the next 8 weeks (demo model)
+  const SEASON=[1.00,1.03,1.05,1.04,1.08,1.11,1.13,1.16];
+  function forecastSku(it){ return SEASON.map(s=>it.vel*s); }
+  function weeksToStockout(it){ let s=it.onHand,w=0; const fc=forecastSku(it); while(s>0&&w<40){ s-=(fc[Math.min(w,7)]||it.vel); w++; } return it.onHand<=0?0:w; }
+  function reorderWeeks(it){ return Math.max(0, weeksToStockout(it)-leadWeeks(it)); }
+  function urgency(it){ const r=reorderWeeks(it); if(it.onHand===0) return["Order now","badge-red",0]; if(r<=1)return["Reorder now","badge-red",r]; if(r<=3)return["Reorder soon","badge-amber",r]; return["On track","badge-green",r]; }
+
+  function forecastChart(it){
+    const W=720,H=260,PL=42,PR=16,PT=18,PB=30, plotW=W-PL-PR, plotH=H-PT-PB;
+    const hist=it.trend, fc=forecastSku(it), n=16;
+    const upper=fc.map((v,i)=>v*(1+0.10+i*0.03)), lower=fc.map((v,i)=>Math.max(0,v*(1-0.10-i*0.03)));
+    const ymax=Math.max(...hist,...upper)*1.15||1;
+    const xi=i=>PL+plotW*(i/(n-1)), xw=w=>PL+plotW*((7+w)/(n-1)), y=v=>PT+plotH-(v/ymax*plotH);
+    const histPts=hist.map((v,i)=>`${xi(i)},${y(v)}`).join(" ");
+    const fcPts=[`${xi(7)},${y(hist[7])}`,...fc.map((v,i)=>`${xi(8+i)},${y(v)}`)].join(" ");
+    const band=[...upper.map((v,i)=>`${xi(8+i)},${y(v)}`),...lower.map((v,i)=>`${xi(8+i)},${y(v)}`).reverse()].join(" ");
+    const gy=[0,.5,1].map(f=>{const yy=PT+plotH-f*plotH;return `<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="var(--line)" stroke-width="1"/><text x="${PL-6}" y="${yy+3}" text-anchor="end" font-size="10" fill="var(--slate-400)">${(f*ymax).toFixed(0)}</text>`;}).join("");
+    const nowX=xi(7);
+    const so=weeksToStockout(it), ro=reorderWeeks(it);
+    const soM = so<=8 && it.onHand>0 ? `<line x1="${xw(so)}" y1="${PT}" x2="${xw(so)}" y2="${PT+plotH}" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${xw(so)}" y="${PT+8}" text-anchor="middle" font-size="9" fill="var(--red)" font-weight="700">stockout</text>`:"";
+    const roM = ro<=8 && ro>0 ? `<line x1="${xw(ro)}" y1="${PT}" x2="${xw(ro)}" y2="${PT+plotH}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="${xw(ro)}" y="${PT+8}" text-anchor="middle" font-size="9" fill="var(--amber)" font-weight="700">reorder by</text>`:"";
+    const xlabels=[["-8 wk",xi(0)],["now",nowX],["+8 wk",xi(15)]].map(([t,x])=>`<text x="${x}" y="${H-10}" text-anchor="middle" font-size="10" fill="var(--slate-400)">${t}</text>`).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+      ${gy}
+      <polygon points="${band}" fill="var(--teal-soft)" opacity=".55"/>
+      <line x1="${nowX}" y1="${PT}" x2="${nowX}" y2="${PT+plotH}" stroke="var(--slate-400)" stroke-width="1" stroke-dasharray="2 2"/>
+      <polyline points="${histPts}" fill="none" stroke="var(--teal)" stroke-width="2.5"/>
+      <polyline points="${fcPts}" fill="none" stroke="var(--teal-dark)" stroke-width="2.5" stroke-dasharray="6 4"/>
+      ${hist.map((v,i)=>`<circle cx="${xi(i)}" cy="${y(v)}" r="2.5" fill="var(--teal)"/>`).join("")}
+      ${roM}${soM}${xlabels}
+    </svg>`;
+  }
+
+  let fcSel=null;
+  function renderForecast(){
+    const dmd4 = STOCK.reduce((a,it)=>a+forecastSku(it).slice(0,4).reduce((x,v)=>x+v,0),0);
+    const soon = STOCK.filter(it=>reorderWeeks(it)<=2 && it.onHand>0 || it.onHand===0);
+    const stockouts30 = STOCK.filter(it=>weeksToStockout(it)<=4.3 && it.onHand>0).length + STOCK.filter(it=>it.onHand===0).length;
+    const spend = soon.reduce((a,it)=>a+suggested(it)*it.cost,0);
+    if(!fcSel){ const urgentSorted=[...STOCK].sort((a,b)=>reorderWeeks(a)-reorderWeeks(b)); fcSel=urgentSorted[0].sku; }
+    const sel=itemBy(fcSel);
+    const rows=[...STOCK].sort((a,b)=>reorderWeeks(a)-reorderWeeks(b)).map(it=>{
+      const [ul,uc]=urgency(it), so=weeksToStockout(it), ro=reorderWeeks(it), avg=(forecastSku(it).slice(0,4).reduce((x,v)=>x+v,0)/4);
+      return `<tr class="clickable" data-fc="${it.sku}"><td><div class="strong">${it.name}</div><div class="muted" style="font-size:.74rem">${it.sku}</div></td>
+        <td class="t-right tnum">${it.onHand}</td><td class="t-right tnum muted">${avg.toFixed(1)}/wk</td>
+        <td class="t-right tnum">${it.onHand===0?'<span style="color:var(--red)">now</span>':fmtDate(addWeeks(TODAY,so))}</td>
+        <td class="t-right tnum strong">${it.onHand===0?'<span style="color:var(--red)">now</span>':(ro<=0?'now':fmtDate(addWeeks(TODAY,ro)))}</td>
+        <td><span class="badge ${uc}">${ul}</span></td></tr>`;
+    }).join("");
+    $("view-forecast").innerHTML=`
+      <div class="stat-grid" style="margin-bottom:1.6rem">
+        <div class="stat"><div class="accent-bar"></div><div class="label">4-week demand</div><div class="value tnum">${Math.round(dmd4)}</div><div class="trend muted">units projected</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Reorder within 2 wks</div><div class="value tnum" style="color:var(--amber)">${soon.length}</div><div class="trend muted">items</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--red)"></div><div class="label">Stockout risk · 30 days</div><div class="value tnum" style="color:var(--red)">${stockouts30}</div><div class="trend muted">items</div></div>
+        <div class="stat"><div class="accent-bar"></div><div class="label">Projected reorder spend</div><div class="value tnum">${money(spend)}</div><div class="trend muted">to restock</div></div>
+      </div>
+      <div class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.6rem">
+        <div class="row between center" style="margin-bottom:.3rem;flex-wrap:wrap;gap:.6rem">
+          <div><div class="eyebrow" style="color:var(--teal-dark)">Demand forecast</div><h2 style="font-size:1.1rem">${sel.name}</h2></div>
+          <span class="selectish">Item <select id="fcPick">${STOCK.map(it=>`<option value="${it.sku}" ${it.sku===fcSel?"selected":""}>${it.name}</option>`).join("")}</select></span>
+        </div>
+        ${forecastChart(sel)}
+        <div class="row" style="gap:1.4rem;flex-wrap:wrap;margin-top:.6rem;font-size:.82rem">
+          <span class="row center" style="gap:.4rem"><span style="width:16px;height:3px;background:var(--teal);display:inline-block"></span> Actual sell-through</span>
+          <span class="row center" style="gap:.4rem"><span style="width:16px;height:0;border-top:3px dashed var(--teal-dark);display:inline-block"></span> Forecast</span>
+          <span class="row center" style="gap:.4rem"><span style="width:16px;height:10px;background:var(--teal-soft);display:inline-block;border-radius:2px"></span> Confidence range</span>
+          <span class="muted" style="margin-left:auto">Model: 8-week sell-through + seasonal trend</span>
+        </div>
+      </div>
+      <div class="sec-head"><div><div class="eyebrow">Reorder schedule</div><h2>When to reorder each item</h2></div></div>
+      <div class="table-wrap"><table class="data wide">
+        <thead><tr><th>Item</th><th class="t-right">On hand</th><th class="t-right">Forecast demand</th><th class="t-right">Projected stockout</th><th class="t-right">Reorder by</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+    $("fcPick").addEventListener("change",e=>{ fcSel=e.target.value; renderForecast(); });
+    $("view-forecast").querySelectorAll("[data-fc]").forEach(r=>r.onclick=()=>{ fcSel=r.dataset.fc; renderForecast(); window.scrollTo({top:0,behavior:"smooth"}); });
+  }
+
+  /* ---------- views ---------- */
+  const titles={dash:["Inventory overview","Live stock health and reorder signals"],stock:["All stock","Every tracked SKU and its velocity"],reorder:["Reorder","Suggested purchases and PO builder"],forecast:["Forecast","Projected demand and reorder timing"],receive:["Receive shipment","Log inbound stock"],sku:["Item","Stock detail"]};
+  const VIEWS=["dash","stock","reorder","forecast","receive","sku"];
+  function show(v,title,sub){
+    VIEWS.forEach(x=>$("view-"+x).classList.toggle("hide",x!==v));
     document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.toggle("active",n.dataset.view===v));
     document.querySelectorAll('#quickViews button').forEach(n=>n.classList.toggle("on",n.dataset.view===v));
-    document.getElementById("viewTitle").textContent=titles[v][0];
-    document.getElementById("viewSub").textContent=titles[v][1];
+    $("viewTitle").textContent=title||titles[v][0]; $("viewSub").textContent=sub||titles[v][1]; window.scrollTo(0,0);
     if(v==="stock") stockTable();
-    if(v==="reorder") renderAlerts("alertList2");
+    if(v==="reorder"){ renderAlerts("alertList2",true); renderPO(); }
+    if(v==="forecast") renderForecast();
+    if(v==="receive"){ receive.step=1; renderReceive(); }
+    if(v==="dash"){ kpis(); renderAlerts("alertList",false); velChart(); }
   }
+  function setView(v){ show(v,titles[v][0],titles[v][1]); }
   document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener("click",()=>setView(el.dataset.view)));
 
   /* init */
-  kpis(); renderAlerts("alertList"); velChart();
+  fillCats(); kpis(); setView("dash");
 })();
 </script>
 </body>

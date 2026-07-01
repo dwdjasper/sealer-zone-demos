@@ -8,9 +8,9 @@ Three interactive prototypes built to show a brick-and-mortar epoxy/sealer suppl
 
 | # | Demo | Folder | What it shows |
 |---|------|--------|---------------|
-| 01 | **Storefront** | `storefront/` | Bilingual (EN/PT) B2B catalog with contractor pricing, a coverage calculator (gallons from sq ft × mils), stock badges, quick reorder, and a cart/checkout flow. |
-| 02 | **CRM** | `crm/` | Dashboard of accounts by lifetime value, a searchable account table (tier, language, tax status, balance), and a drag-and-drop order pipeline (quote → packing → ready → picked up). |
-| 03 | **Inventory** | `inventory/` | Stock health KPIs, reorder-point alerts with velocity-based purchase suggestions, a full stock table with weeks-of-cover, and a fastest-movers chart. |
+| 01 | **Storefront** | `storefront/` | Bilingual (EN/PT) B2B catalog with contractor pricing, product detail pages, a coverage calculator, a **floor-system builder** (auto-sizes a full bill of materials from job size), quick reorder, and a multi-step checkout. |
+| 02 | **CRM** | `crm/` | Account dashboard, profile pages (order history, notes, spend trend), order detail with a fulfillment timeline, a drag-and-drop pipeline, and an **Insights** view (value segments, revenue concentration, language mix, at-risk accounts). |
+| 03 | **Inventory** | `inventory/` | Stock health KPIs, reorder alerts, SKU detail (movement log, velocity), a receive-shipment flow, a PO builder, and a **Forecast** view (demand projection chart + per-item reorder-by dates). |
 
 ## Running it
 

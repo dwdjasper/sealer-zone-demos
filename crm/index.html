@@ -10,16 +10,12 @@
 <link rel="stylesheet" href="../assets/brand.css">
 <style>
   .demo-flag { background: var(--amber-soft); color: var(--amber); text-align: center; font-size: .76rem; font-weight: 600; padding: .35rem; }
-
-  /* pipeline board */
   .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
   .col { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; min-height: 160px; }
-  .col h4 { font-family: var(--font-body); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-500);
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
+  .col h4 { font-family: var(--font-body); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-500); display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
   .col h4 .n { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0 .5rem; font-size: .72rem; color: var(--slate-700); }
   .col[data-stage="ready"] h4 { color: var(--teal-dark); }
-  .ocard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .75rem .8rem; margin-bottom: .6rem;
-    box-shadow: var(--shadow-sm); cursor: grab; transition: box-shadow .14s, transform .1s, border-color .14s; }
+  .ocard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .75rem .8rem; margin-bottom: .6rem; box-shadow: var(--shadow-sm); cursor: grab; transition: box-shadow .14s, transform .1s, border-color .14s; }
   .ocard:hover { box-shadow: var(--shadow); border-color: #DCE3EA; transform: translateY(-1px); }
   .ocard .oid { font-family: var(--font-display); font-weight: 600; font-size: .9rem; }
   .ocard .oco { font-size: .78rem; color: var(--slate-600); margin: .15rem 0; }
@@ -27,18 +23,18 @@
   .ocard .ot { font-family: var(--font-display); font-weight: 600; font-size: .88rem; }
   .ocard .age { font-size: .7rem; color: var(--slate-400); }
   .ocard.dragging { opacity: .4; }
+  .ocard .open { font-size: .68rem; color: var(--teal-dark); font-weight: 600; margin-top: .4rem; }
   .col.over { border-color: var(--teal); background: var(--teal-soft); }
-
   .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
   .seg button { border: none; background: transparent; padding: .4rem .8rem; border-radius: 7px; font-size: .84rem; font-weight: 600; color: var(--slate-600); }
   .seg button.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
-
   .lang-flag { font-size: .68rem; font-weight: 700; padding: .12rem .4rem; border-radius: 4px; }
   .lang-PT { background: #DCFCE7; color: #15803D; } .lang-EN { background: #E0E7FF; color: #4338CA; }
   .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: .76rem; font-weight: 700; flex: none; }
+  .avatar.lg { width: 56px; height: 56px; font-size: 1.1rem; }
   .cust-cell { display: flex; align-items: center; gap: .65rem; }
   .hide { display: none; }
-  .search { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--line); border-radius: 9px; padding: .5rem .8rem; background: #fff; width: 280px; }
+  .search { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--line); border-radius: 9px; padding: .5rem .8rem; background: #fff; width: 260px; }
   .search input { border: none; outline: none; font-size: .88rem; width: 100%; font-family: inherit; }
   .ltvbar { width: 90px; }
 </style>
@@ -46,90 +42,75 @@
 <body>
 <div class="demo-flag">Interactive demo · Sealer Zone CRM concept</div>
 <div class="shell">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="mark">SZ</div>
-      <div class="name">Sealer Zone<small>CRM</small></div>
-    </div>
+    <div class="brand"><div class="mark">SZ</div><div class="name">Sealer Zone<small>CRM</small></div></div>
     <a class="nav-item active" data-view="dash"><span class="ico">▦</span> Dashboard</a>
     <a class="nav-item" data-view="accounts"><span class="ico">▤</span> Accounts</a>
+    <a class="nav-item" data-view="insights"><span class="ico">◔</span> Insights</a>
     <a class="nav-item" data-view="pipeline"><span class="ico">◷</span> Order pipeline</a>
     <div class="nav-label">Soon</div>
     <a class="nav-item" style="opacity:.5"><span class="ico">✉</span> Messages</a>
     <a class="nav-item" style="opacity:.5"><span class="ico">⚙</span> Settings</a>
     <div class="spacer"></div>
-    <div class="who">
-      <div class="av">SZ</div>
-      <div class="meta">Counter staff<small>Sealer Zone</small></div>
-    </div>
+    <div class="who"><div class="av">SZ</div><div class="meta">Counter staff<small>Sealer Zone</small></div></div>
   </aside>
 
-  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <div>
-        <h1 id="viewTitle">Dashboard</h1>
-        <div class="sub" id="viewSub">Your book of business at a glance</div>
-      </div>
+      <div><h1 id="viewTitle">Dashboard</h1><div class="sub" id="viewSub">Your book of business at a glance</div></div>
       <div class="seg" id="quickViews">
         <button data-view="dash" class="on">Overview</button>
         <button data-view="accounts">Accounts</button>
         <button data-view="pipeline">Pipeline</button>
       </div>
     </div>
-
     <div class="content">
       <!-- DASHBOARD -->
       <section id="view-dash">
         <div class="stat-grid">
           <div class="stat"><div class="accent-bar"></div><div class="label">Active accounts</div><div class="value tnum" id="kAcc">—</div><div class="trend" style="color:var(--green)">+3 this quarter</div></div>
           <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Avg order value</div><div class="value tnum" id="kAov">—</div><div class="trend muted">across all accounts</div></div>
-          <div class="stat"><div class="accent-bar"></div><div class="label">Open orders</div><div class="value tnum" id="kOpen">—</div><div class="trend muted" id="kOpenSub">in fulfillment</div></div>
+          <div class="stat"><div class="accent-bar"></div><div class="label">Open orders</div><div class="value tnum" id="kOpen">—</div><div class="trend muted">in fulfillment</div></div>
           <div class="stat"><div class="accent-bar" style="background:var(--red)"></div><div class="label">A/R outstanding</div><div class="value tnum" id="kAr">—</div><div class="trend" style="color:var(--red)" id="kArSub">on terms</div></div>
         </div>
-
         <div class="sec-head"><div><div class="eyebrow">Highest value</div><h2>Top accounts by lifetime value</h2></div></div>
-        <div class="table-wrap">
-          <table class="data">
-            <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th class="t-right">Orders</th><th>Lifetime value</th><th>Last order</th></tr></thead>
-            <tbody id="topAccounts"></tbody>
-          </table>
-        </div>
-
+        <div class="table-wrap"><table class="data wide">
+          <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th class="t-right">Orders</th><th>Lifetime value</th><th>Last order</th><th></th></tr></thead>
+          <tbody id="topAccounts"></tbody></table></div>
         <div class="sec-head"><div><div class="eyebrow">Fulfillment</div><h2>Orders in progress</h2></div></div>
-        <div class="table-wrap">
-          <table class="data">
-            <thead><tr><th>Order</th><th>Account</th><th>Stage</th><th class="t-right">Value</th><th class="t-right">Age</th></tr></thead>
-            <tbody id="openOrders"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table class="data wide">
+          <thead><tr><th>Order</th><th>Account</th><th>Stage</th><th class="t-right">Value</th><th class="t-right">Age</th><th></th></tr></thead>
+          <tbody id="openOrders"></tbody></table></div>
       </section>
 
       <!-- ACCOUNTS -->
       <section id="view-accounts" class="hide">
-        <div class="row between center" style="margin-bottom:1rem">
-          <div class="search">
-            <span class="muted">⌕</span>
-            <input id="acctSearch" placeholder="Search company or contact…">
-          </div>
-          <div class="muted" style="font-size:.85rem" id="acctCount"></div>
+        <div class="filterbar">
+          <div class="search"><span class="muted">⌕</span><input id="acctSearch" placeholder="Search company or contact…"></div>
+          <span class="selectish">Tier <select id="fTier"><option value="">All</option><option>Gold</option><option>Silver</option><option>Bronze</option></select></span>
+          <span class="selectish">Language <select id="fLang"><option value="">All</option><option value="PT">Portuguese</option><option value="EN">English</option></select></span>
+          <span class="selectish">Balance <select id="fBal"><option value="">All</option><option value="owing">Has balance</option><option value="clear">Paid up</option></select></span>
+          <span class="muted" style="font-size:.85rem;margin-left:auto" id="acctCount"></span>
         </div>
-        <div class="table-wrap">
-          <table class="data">
-            <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th>Tax</th><th class="t-right">Orders</th><th>Lifetime value</th><th class="t-right">Balance</th><th>Last order</th></tr></thead>
-            <tbody id="acctRows"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table class="data wide">
+          <thead><tr><th>Account</th><th>Tier</th><th>Lang</th><th>Tax</th><th class="t-right">Orders</th><th>Lifetime value</th><th class="t-right">Balance</th><th>Last order</th><th></th></tr></thead>
+          <tbody id="acctRows"></tbody></table></div>
       </section>
 
       <!-- PIPELINE -->
       <section id="view-pipeline" class="hide">
-        <div class="row between center" style="margin-bottom:1rem">
-          <div class="muted" style="font-size:.85rem">Drag an order card between stages to update fulfillment.</div>
-        </div>
+        <div class="muted" style="font-size:.85rem;margin-bottom:1rem">Drag a card between stages to update fulfillment, or click it to open the order.</div>
         <div class="board" id="board"></div>
       </section>
+
+      <!-- INSIGHTS -->
+      <section id="view-insights" class="hide"></section>
+
+      <!-- ACCOUNT DETAIL -->
+      <section id="view-account-detail" class="hide"></section>
+
+      <!-- ORDER DETAIL -->
+      <section id="view-order-detail" class="hide"></section>
     </div>
   </div>
 </div>
@@ -142,127 +123,266 @@
   const money2 = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
   const initials = s => s.split(/\s|—/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
   const custById = id => CUSTOMERS.find(c=>c.id===id);
+  const orderById = id => ORDERS.find(o=>o.id===id);
   const stageLabel = id => (STAGES.find(s=>s.id===id)||{}).label || id;
-  const stageBadge = id => id==="ready" ? "badge-teal" : id==="done" ? "badge-green" : id==="packing" ? "badge-amber" : "badge-slate";
+  const stageBadge = id => id==="ready"?"badge-teal":id==="done"?"badge-green":id==="packing"?"badge-amber":"badge-slate";
+  const tierBadge = t => `<span class="badge ${TIER_BADGE[t]}">${t}</span>`;
+  const langFlag = l => `<span class="lang-flag lang-${l}">${l}</span>`;
+  const $ = id => document.getElementById(id);
 
-  /* ----- dashboard KPIs ----- */
+  /* ---------- KPIs ---------- */
   function kpis(){
-    document.getElementById("kAcc").textContent = CUSTOMERS.length;
-    const aov = Math.round(CUSTOMERS.reduce((a,c)=>a+c.ltv,0) / CUSTOMERS.reduce((a,c)=>a+c.orders,0));
-    document.getElementById("kAov").textContent = money(aov);
-    const open = ORDERS.filter(o=>o.stage!=="done");
-    document.getElementById("kOpen").textContent = open.length;
-    const ar = CUSTOMERS.reduce((a,c)=>a+c.balance,0);
-    document.getElementById("kAr").textContent = money(ar);
-    const arCount = CUSTOMERS.filter(c=>c.balance>0).length;
-    document.getElementById("kArSub").textContent = arCount + " accounts on terms";
+    $("kAcc").textContent = CUSTOMERS.length;
+    const aov = Math.round(CUSTOMERS.reduce((a,c)=>a+c.ltv,0)/CUSTOMERS.reduce((a,c)=>a+c.orders,0));
+    $("kAov").textContent = money(aov);
+    $("kOpen").textContent = ORDERS.filter(o=>o.stage!=="done").length;
+    $("kAr").textContent = money(CUSTOMERS.reduce((a,c)=>a+c.balance,0));
+    $("kArSub").textContent = CUSTOMERS.filter(c=>c.balance>0).length + " accounts on terms";
   }
 
-  function tierBadge(t){ return `<span class="badge ${TIER_BADGE[t]}">${t}</span>`; }
-  function langFlag(l){ return `<span class="lang-flag lang-${l}">${l}</span>`; }
-
-  /* ----- dashboard tables ----- */
+  /* ---------- dashboard tables ---------- */
   function topAccounts(){
-    const rows = [...CUSTOMERS].sort((a,b)=>b.ltv-a.ltv).slice(0,5);
-    const max = rows[0].ltv;
-    document.getElementById("topAccounts").innerHTML = rows.map(c=>`
-      <tr>
-        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div>
-          <div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.id}</div></div></div></td>
-        <td>${tierBadge(c.tier)}</td>
-        <td>${langFlag(c.lang)}</td>
-        <td class="t-right tnum">${c.orders}</td>
-        <td><div class="row center" style="gap:.6rem">
-          <div class="mini-bar ltvbar"><span style="width:${Math.round(c.ltv/max*100)}%;background:var(--teal)"></span></div>
-          <span class="strong tnum">${money(c.ltv)}</span></div></td>
-        <td class="muted">${c.last}</td>
-      </tr>`).join("");
+    const rows=[...CUSTOMERS].sort((a,b)=>b.ltv-a.ltv).slice(0,5); const max=rows[0].ltv;
+    $("topAccounts").innerHTML = rows.map(c=>`
+      <tr class="clickable" data-acct="${c.id}">
+        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div><div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.id}</div></div></div></td>
+        <td>${tierBadge(c.tier)}</td><td>${langFlag(c.lang)}</td><td class="t-right tnum">${c.orders}</td>
+        <td><div class="row center" style="gap:.6rem"><div class="mini-bar ltvbar"><span style="width:${Math.round(c.ltv/max*100)}%;background:var(--teal)"></span></div><span class="strong tnum">${money(c.ltv)}</span></div></td>
+        <td class="muted">${c.last}</td><td class="t-right chevron">›</td></tr>`).join("");
   }
   function openOrders(){
-    document.getElementById("openOrders").innerHTML = ORDERS.filter(o=>o.stage!=="done").map(o=>`
-      <tr>
-        <td class="strong">${o.id}</td>
-        <td>${o.company}</td>
+    $("openOrders").innerHTML = ORDERS.filter(o=>o.stage!=="done").map(o=>`
+      <tr class="clickable" data-order="${o.id}">
+        <td class="strong">${o.id}</td><td>${o.company}</td>
         <td><span class="badge ${stageBadge(o.stage)}"><span class="dot"></span>${stageLabel(o.stage)}</span></td>
-        <td class="t-right tnum strong">${money2(o.total)}</td>
-        <td class="t-right muted">${o.age}</td>
-      </tr>`).join("");
+        <td class="t-right tnum strong">${money2(o.total)}</td><td class="t-right muted">${o.age}</td><td class="t-right chevron">›</td></tr>`).join("");
   }
 
-  /* ----- accounts ----- */
-  function renderAccounts(filter=""){
-    const f = filter.toLowerCase();
-    const rows = CUSTOMERS.filter(c=> (c.company+c.contact).toLowerCase().includes(f));
-    document.getElementById("acctCount").textContent = rows.length + " accounts";
-    const max = Math.max(...CUSTOMERS.map(c=>c.ltv));
-    document.getElementById("acctRows").innerHTML = rows.map(c=>`
-      <tr>
-        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div>
-          <div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.phone}</div></div></div></td>
-        <td>${tierBadge(c.tier)}</td>
-        <td>${langFlag(c.lang)}</td>
+  /* ---------- accounts (filterable) ---------- */
+  function renderAccounts(){
+    const q=$("acctSearch").value.toLowerCase(), tier=$("fTier").value, lang=$("fLang").value, bal=$("fBal").value;
+    let rows=CUSTOMERS.filter(c=>(c.company+c.contact).toLowerCase().includes(q));
+    if(tier) rows=rows.filter(c=>c.tier===tier);
+    if(lang) rows=rows.filter(c=>c.lang===lang);
+    if(bal==="owing") rows=rows.filter(c=>c.balance>0); if(bal==="clear") rows=rows.filter(c=>c.balance===0);
+    $("acctCount").textContent = rows.length+" accounts";
+    const max=Math.max(...CUSTOMERS.map(c=>c.ltv));
+    $("acctRows").innerHTML = rows.map(c=>`
+      <tr class="clickable" data-acct="${c.id}">
+        <td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div><div><div class="strong">${c.company}</div><div class="muted" style="font-size:.78rem">${c.contact} · ${c.phone}</div></div></div></td>
+        <td>${tierBadge(c.tier)}</td><td>${langFlag(c.lang)}</td>
         <td>${c.taxExempt?'<span class="badge badge-slate">Exempt</span>':'<span class="muted">—</span>'}</td>
         <td class="t-right tnum">${c.orders}</td>
         <td><div class="row center" style="gap:.6rem"><div class="mini-bar ltvbar"><span style="width:${Math.round(c.ltv/max*100)}%;background:var(--teal)"></span></div><span class="strong tnum">${money(c.ltv)}</span></div></td>
         <td class="t-right tnum ${c.balance>0?'':'muted'}" ${c.balance>0?'style=color:var(--red);font-weight:600':''}>${c.balance>0?money2(c.balance):'—'}</td>
-        <td class="muted">${c.last}</td>
-      </tr>`).join("");
+        <td class="muted">${c.last}</td><td class="t-right chevron">›</td></tr>`).join("");
   }
-  document.getElementById("acctSearch").addEventListener("input", e=>renderAccounts(e.target.value));
+  ["acctSearch","fTier","fLang","fBal"].forEach(id=>$(id).addEventListener("input",renderAccounts));
 
-  /* ----- pipeline board (drag & drop) ----- */
-  let dragId = null;
-  function renderBoard(){
-    const board = document.getElementById("board");
-    board.innerHTML = STAGES.map(s=>{
-      const cards = ORDERS.filter(o=>o.stage===s.id);
-      return `<div class="col" data-stage="${s.id}">
-        <h4>${s.label} <span class="n">${cards.length}</span></h4>
-        ${cards.map(o=>`
-          <div class="ocard" draggable="true" data-id="${o.id}">
-            <div class="oid">${o.id}</div>
-            <div class="oco">${o.company}</div>
-            <div class="om"><span class="ot tnum">${money2(o.total)}</span><span class="age">${o.items} items · ${o.age}</span></div>
-          </div>`).join("")}
+  /* ---------- account detail ---------- */
+  function sparkline(arr){
+    const max=Math.max(...arr); return `<div class="spark">${arr.map((v,i)=>`<span class="${i===arr.length-1?'hi':''}" style="height:${Math.max(6,v/max*100)}%"></span>`).join("")}</div>`;
+  }
+  function openAccount(id){
+    const c=custById(id); if(!c) return;
+    const hist=(HISTORY[id]||[]);
+    const histRows = hist.length ? hist.map(h=>`<tr class="clickable" data-order="${h[0]}"><td class="strong">${h[0]}</td><td class="muted">${h[1]}</td><td class="t-right tnum strong">${money2(h[2])}</td><td class="t-right chevron">›</td></tr>`).join("")
+      : `<tr><td colspan="4" class="muted" style="text-align:center;padding:1.4rem">No recent orders on file.</td></tr>`;
+    const notes = c.notes.length ? c.notes.map(n=>`<div class="note">${n.t}<div class="meta">${n.w} · ${n.d}</div></div>`).join("") : `<div class="muted" style="font-size:.85rem">No notes yet.</div>`;
+    $("view-account-detail").innerHTML = `
+      <button class="backlink" data-view="accounts">← Back to accounts</button>
+      <div class="detail-head">
+        <div class="row center" style="gap:1rem"><div class="avatar lg">${initials(c.company)}</div>
+          <div><div class="detail-title">${c.company}</div><div class="detail-sub">${c.contact} · ${c.phone} · ${c.email}</div>
+            <div style="margin-top:.5rem;display:flex;gap:.4rem">${tierBadge(c.tier)} ${langFlag(c.lang)} ${c.taxExempt?'<span class="badge badge-slate">Tax exempt</span>':''} <span class="badge badge-slate">Since ${c.since}</span></div></div></div>
+        ${c.balance>0?`<div style="text-align:right"><div class="muted" style="font-size:.76rem">Outstanding balance</div><div style="font-family:var(--font-display);font-weight:600;font-size:1.4rem;color:var(--red)">${money2(c.balance)}</div></div>`:''}
+      </div>
+      <div class="stat-grid" style="margin-bottom:1.6rem">
+        <div class="stat"><div class="accent-bar"></div><div class="label">Lifetime value</div><div class="value tnum">${money(c.ltv)}</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--amber)"></div><div class="label">Total orders</div><div class="value tnum">${c.orders}</div></div>
+        <div class="stat"><div class="accent-bar"></div><div class="label">Avg order value</div><div class="value tnum">${money(c.aov)}</div></div>
+        <div class="stat"><div class="accent-bar" style="background:var(--green)"></div><div class="label">Last order</div><div class="value" style="font-size:1.2rem;margin-top:.6rem">${c.last}</div></div>
+      </div>
+      <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1.4;min-width:320px">
+          <div class="sec-head"><div><div class="eyebrow">History</div><h2>Recent orders</h2></div></div>
+          <div class="table-wrap"><table class="data"><tbody>${histRows}</tbody></table></div>
+        </div>
+        <div style="flex:1;min-width:260px">
+          <div class="sec-head"><div><div class="eyebrow">Trend</div><h2>Monthly spend</h2></div></div>
+          <div class="card" style="padding:1.1rem 1.2rem">${sparkline(c.spend)}<div class="muted" style="font-size:.75rem;margin-top:.6rem">Last 12 months (in $1,000s)</div></div>
+          <div class="sec-head"><div><div class="eyebrow">Account</div><h2>Notes</h2></div></div>
+          <div id="noteList">${notes}</div>
+          <div class="row" style="gap:.5rem;margin-top:.7rem"><input class="inp" id="noteInput" placeholder="Add a note…"><button class="btn btn-primary btn-sm" id="addNote">Add</button></div>
+        </div>
       </div>`;
-    }).join("");
+    $("addNote").onclick=()=>{ const v=$("noteInput").value.trim(); if(!v) return; c.notes.unshift({t:v,w:"You",d:"Just now"}); openAccount(id); };
+    bindRows();
+    show("account-detail","Account","Customer profile and history");
+  }
 
+  /* ---------- order detail ---------- */
+  function openOrder(id){
+    const o=orderById(id); if(!o){ return; }
+    const c=custById(o.cust);
+    const idx=STAGES.findIndex(s=>s.id===o.stage);
+    const timeline=STAGES.map((s,i)=>{
+      const cls=i<idx?"done":i===idx?"current":"";
+      const when=i<idx?"Completed":i===idx?"In progress":"Pending";
+      return `<div class="tl-step ${cls}"><div class="tl-t">${s.label}</div><div class="tl-d">${when}</div></div>`;
+    }).join("");
+    const lines=o.lines.map(l=>`<tr><td class="strong">${l[0]}</td><td class="t-right tnum">${l[1]}</td><td class="t-right tnum">${money2(l[2])}</td><td class="t-right tnum strong">${money2(l[1]*l[2])}</td></tr>`).join("");
+    const canAdvance=o.stage!=="done";
+    $("view-order-detail").innerHTML=`
+      <button class="backlink" data-back-order>← Back</button>
+      <div class="detail-head">
+        <div><div class="detail-title">Order ${o.id}</div><div class="detail-sub">${o.company} · placed ${o.placed}</div></div>
+        <div style="text-align:right"><span class="badge ${stageBadge(o.stage)}" style="font-size:.8rem"><span class="dot"></span>${stageLabel(o.stage)}</span>
+          <div style="font-family:var(--font-display);font-weight:600;font-size:1.5rem;margin-top:.4rem">${money2(o.total)}</div></div>
+      </div>
+      <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1.5;min-width:340px">
+          <div class="sec-head"><div><div class="eyebrow">Items</div><h2>${o.items} line items</h2></div></div>
+          <div class="table-wrap"><table class="data">
+            <thead><tr><th>Product</th><th class="t-right">Qty</th><th class="t-right">Unit</th><th class="t-right">Total</th></tr></thead>
+            <tbody>${lines}</tbody></table></div>
+          <div class="row between" style="margin-top:1rem;padding:0 1rem"><span class="muted">Order total</span><span class="strong tnum" style="font-size:1.1rem">${money2(o.total)}</span></div>
+        </div>
+        <div style="flex:1;min-width:240px">
+          <div class="sec-head"><div><div class="eyebrow">Fulfillment</div><h2>Status</h2></div></div>
+          <div class="card" style="padding:1.3rem 1.3rem 1rem"><div class="timeline">${timeline}</div></div>
+          <div class="card" style="padding:1rem 1.2rem;margin-top:1rem">
+            <div class="row center" style="gap:.65rem"><div class="avatar">${initials(c.company)}</div><div><div class="strong" style="font-size:.9rem">${c.company}</div><div class="muted" style="font-size:.76rem">${tierBadge(c.tier).replace(/<[^>]+>/g,'')} · ${c.phone}</div></div></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:.8rem" data-acct="${c.id}">View account →</button>
+          </div>
+          ${canAdvance?`<button class="btn btn-primary" style="width:100%;margin-top:1rem" id="advance">Advance to ${stageLabel(STAGES[idx+1].id)} →</button>`:`<div class="badge badge-green" style="margin-top:1rem;justify-content:center;width:100%;padding:.5rem">✓ Completed</div>`}
+        </div>
+      </div>`;
+    if(canAdvance) $("advance").onclick=()=>{ o.stage=STAGES[idx+1].id; openOrder(id); kpis(); openOrders(); };
+    bindRows();
+    show("order-detail","Order "+o.id,o.company);
+  }
+
+  /* ---------- pipeline ---------- */
+  let dragId=null;
+  function renderBoard(){
+    const board=$("board");
+    board.innerHTML=STAGES.map(s=>{
+      const cards=ORDERS.filter(o=>o.stage===s.id);
+      return `<div class="col" data-stage="${s.id}"><h4>${s.label} <span class="n">${cards.length}</span></h4>
+        ${cards.map(o=>`<div class="ocard" draggable="true" data-id="${o.id}"><div class="oid">${o.id}</div><div class="oco">${o.company}</div><div class="om"><span class="ot tnum">${money2(o.total)}</span><span class="age">${o.items} items · ${o.age}</span></div><div class="open">Open order ›</div></div>`).join("")}</div>`;
+    }).join("");
     board.querySelectorAll(".ocard").forEach(card=>{
-      card.addEventListener("dragstart", ()=>{ dragId = card.dataset.id; card.classList.add("dragging"); });
-      card.addEventListener("dragend", ()=>{ card.classList.remove("dragging"); });
+      card.addEventListener("dragstart",()=>{dragId=card.dataset.id;card.classList.add("dragging");});
+      card.addEventListener("dragend",()=>card.classList.remove("dragging"));
+      card.addEventListener("click",e=>{ if(!card.classList.contains("dragging")) openOrder(card.dataset.id); });
     });
     board.querySelectorAll(".col").forEach(col=>{
-      col.addEventListener("dragover", e=>{ e.preventDefault(); col.classList.add("over"); });
-      col.addEventListener("dragleave", ()=> col.classList.remove("over"));
-      col.addEventListener("drop", e=>{
-        e.preventDefault(); col.classList.remove("over");
-        const o = ORDERS.find(x=>x.id===dragId);
-        if(o){ o.stage = col.dataset.stage; renderBoard(); kpis(); openOrders(); }
-      });
+      col.addEventListener("dragover",e=>{e.preventDefault();col.classList.add("over");});
+      col.addEventListener("dragleave",()=>col.classList.remove("over"));
+      col.addEventListener("drop",e=>{e.preventDefault();col.classList.remove("over");const o=orderById(dragId);if(o){o.stage=col.dataset.stage;renderBoard();kpis();openOrders();}});
     });
   }
 
-  /* ----- view switching ----- */
-  const titles = {
-    dash:["Dashboard","Your book of business at a glance"],
-    accounts:["Accounts","Every B2B account, pricing tier, and balance"],
-    pipeline:["Order pipeline","Track each order from quote to pickup"]
-  };
-  function setView(v){
-    ["dash","accounts","pipeline"].forEach(x=>{
-      document.getElementById("view-"+x).classList.toggle("hide", x!==v);
-    });
-    document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.toggle("active", n.dataset.view===v));
-    document.querySelectorAll('#quickViews button').forEach(n=>n.classList.toggle("on", n.dataset.view===v));
-    document.getElementById("viewTitle").textContent = titles[v][0];
-    document.getElementById("viewSub").textContent = titles[v][1];
-    if(v==="accounts") renderAccounts(document.getElementById("acctSearch").value);
-    if(v==="pipeline") renderBoard();
+  /* ---------- insights / analytics ---------- */
+  const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  function recencyDays(c){ const s=c.last; if(s==="today")return 0; if(s==="yesterday")return 1; const m=/(\d+)\s*(day|week|month)/.exec(s); if(!m)return 40; const n=+m[1]; return m[2]==="day"?n:m[2]==="week"?n*7:n*30; }
+  function trendPct(c){ const a=avg(c.spend.slice(9)),b=avg(c.spend.slice(6,9)); return b?(a-b)/b:0; }
+  function segmentOf(c,thr){ if(c.since>="2024"&&c.orders<20)return"New"; if(recencyDays(c)>20||trendPct(c)<-0.10)return"At-risk"; if(c.ltv>=thr&&recencyDays(c)<=3)return"Champion"; return"Loyal"; }
+
+  function renderInsights(){
+    const total=CUSTOMERS.reduce((a,c)=>a+c.ltv,0);
+    const ltvs=[...CUSTOMERS.map(c=>c.ltv)].sort((a,b)=>b-a);
+    const thr=ltvs[Math.floor(ltvs.length*0.3)];
+    const segs={Champion:[],Loyal:[],"At-risk":[],New:[]};
+    CUSTOMERS.forEach(c=>segs[segmentOf(c,thr)].push(c));
+    const meta={Champion:["badge-green","Champions","High value · recently active"],Loyal:["badge-teal","Loyal","Steady, reliable accounts"],"At-risk":["badge-amber","At-risk","Slowing down or overdue"],New:["badge-slate","New","Recently onboarded"]};
+    const segCards=Object.keys(meta).map(k=>{ const arr=segs[k],rev=arr.reduce((a,c)=>a+c.ltv,0),[bc,label,desc]=meta[k];
+      return `<div class="card" style="padding:1.1rem 1.2rem"><div class="row between center"><span class="badge ${bc}">${label}</span><span style="font-size:1.5rem;font-family:var(--font-display);font-weight:600">${arr.length}</span></div>
+        <div class="muted" style="font-size:.76rem;margin:.35rem 0 .7rem">${desc}</div>
+        <div class="mini-bar" style="margin-bottom:.45rem"><span style="width:${Math.round(rev/total*100)}%;background:var(--teal)"></span></div>
+        <div style="font-size:.76rem;color:var(--slate-600)">${money(rev)} · ${Math.round(rev/total*100)}% of revenue</div>
+        <div style="font-size:.73rem;color:var(--slate-400);margin-top:.45rem;line-height:1.4">${arr.slice(0,2).map(c=>c.company).join(", ")||"—"}${arr.length>2?" +"+(arr.length-2)+" more":""}</div></div>`;
+    }).join("");
+    const sorted=[...CUSTOMERS].sort((a,b)=>b.ltv-a.ltv);
+    const top3=sorted.slice(0,3).reduce((a,c)=>a+c.ltv,0), top3pct=Math.round(top3/total*100);
+    const pt=CUSTOMERS.filter(c=>c.lang==="PT"),en=CUSTOMERS.filter(c=>c.lang==="EN");
+    const ptRev=pt.reduce((a,c)=>a+c.ltv,0),ptPct=Math.round(ptRev/total*100);
+    const tiers=["Gold","Silver","Bronze"].map(t=>{const arr=CUSTOMERS.filter(c=>c.tier===t);return[t,arr.length,arr.reduce((a,c)=>a+c.ltv,0)];});
+    const tmax=Math.max(...tiers.map(t=>t[2]));
+    const atRisk=segs["At-risk"];
+    const riskRows=atRisk.length?atRisk.map(c=>{const tr=trendPct(c),rec=recencyDays(c);const reason=rec>20?`Last order ${c.last}`:`Spend down ${Math.abs(Math.round(tr*100))}%`;
+      return `<tr class="clickable" data-acct="${c.id}"><td><div class="cust-cell"><div class="avatar">${initials(c.company)}</div><div><div class="strong">${c.company}</div><div class="muted" style="font-size:.76rem">${c.contact} · ${tierBadge(c.tier).replace(/<[^>]+>/g,'')}</div></div></div></td><td><span class="badge badge-amber">${reason}</span></td><td class="muted">${c.last}</td><td class="t-right tnum strong">${money(c.ltv)}</td><td class="t-right chevron">›</td></tr>`;
+    }).join(""):`<tr><td colspan="5" class="muted" style="text-align:center;padding:1.4rem">No at-risk accounts right now.</td></tr>`;
+
+    $("view-insights").innerHTML=`
+      <div class="sec-head"><div><div class="eyebrow">Customer base</div><h2>Value segments</h2></div><span class="muted" style="font-size:.82rem">${CUSTOMERS.length} accounts · ${money(total)} lifetime value</span></div>
+      <div class="stat-grid">${segCards}</div>
+
+      <div class="row" style="gap:1.4rem;align-items:stretch;flex-wrap:wrap;margin-top:1.6rem">
+        <div style="flex:1.3;min-width:300px" class="card">
+          <div style="padding:1.2rem 1.3rem"><div class="eyebrow">Revenue concentration</div><h2 style="font-size:1.05rem;margin:.2rem 0 1rem">Where the money comes from</h2>
+            <div style="display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--line)">
+              <div style="width:${top3pct}%;background:var(--teal);display:grid;place-items:center;color:#fff;font-size:.78rem;font-weight:700">${top3pct}%</div>
+              <div style="flex:1;background:var(--surface);display:grid;place-items:center;color:var(--slate-500);font-size:.78rem;font-weight:600">${100-top3pct}%</div>
+            </div>
+            <div class="row between" style="margin-top:.5rem;font-size:.76rem;color:var(--slate-500)"><span>Top 3 accounts</span><span>Other ${CUSTOMERS.length-3}</span></div>
+            <p style="font-size:.85rem;color:var(--slate-700);margin-top:.9rem;line-height:1.5">Your top 3 accounts — ${sorted.slice(0,3).map(c=>c.company.split(" ")[0]).join(", ")} — drive <b>${top3pct}%</b> of lifetime revenue. Losing one would sting; worth protecting with proactive service.</p>
+          </div>
+        </div>
+        <div style="flex:1;min-width:260px" class="card">
+          <div style="padding:1.2rem 1.3rem"><div class="eyebrow">Language mix</div><h2 style="font-size:1.05rem;margin:.2rem 0 1rem">Who you serve</h2>
+            <div style="display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--line)">
+              <div style="width:${ptPct}%;background:#16A34A;display:grid;place-items:center;color:#fff;font-size:.78rem;font-weight:700">PT ${ptPct}%</div>
+              <div style="flex:1;background:#E0E7FF;display:grid;place-items:center;color:#4338CA;font-size:.78rem;font-weight:700">EN ${100-ptPct}%</div>
+            </div>
+            <div class="row between" style="margin-top:.5rem;font-size:.76rem;color:var(--slate-500)"><span>${pt.length} Portuguese accounts</span><span>${en.length} English</span></div>
+            <p style="font-size:.85rem;color:var(--slate-700);margin-top:.9rem;line-height:1.5"><b>${ptPct}%</b> of revenue comes from Portuguese-speaking contractors — the bilingual storefront and PT quoting aren't a nice-to-have, they're core.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="gap:1.4rem;align-items:flex-start;flex-wrap:wrap;margin-top:1.6rem">
+        <div style="flex:1;min-width:280px">
+          <div class="sec-head"><div><div class="eyebrow">By tier</div><h2>Revenue by pricing tier</h2></div></div>
+          <div class="card" style="padding:1.2rem 1.3rem">${tiers.map(([t,ct,rev])=>`<div style="margin-bottom:.9rem"><div class="row between" style="font-size:.82rem;margin-bottom:.3rem"><span class="strong">${t} <span class="muted">· ${ct} accounts</span></span><span class="strong tnum">${money(rev)}</span></div><div class="mini-bar"><span style="width:${Math.round(rev/tmax*100)}%;background:${t==='Gold'?'#D97706':t==='Silver'?'#94A3B8':'#CBAE8F'}"></span></div></div>`).join("")}</div>
+        </div>
+        <div style="flex:1.3;min-width:320px">
+          <div class="sec-head"><div><div class="eyebrow" style="color:var(--amber)">Needs attention</div><h2>At-risk accounts</h2></div></div>
+          <div class="table-wrap"><table class="data"><thead><tr><th>Account</th><th>Signal</th><th>Last order</th><th class="t-right">LTV</th><th></th></tr></thead><tbody>${riskRows}</tbody></table></div>
+        </div>
+      </div>`;
+    bindRows();
   }
-  document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener("click", ()=>setView(el.dataset.view)));
+
+  /* ---------- row binding + nav ---------- */
+  function bindRows(){
+    document.querySelectorAll("[data-acct]").forEach(el=>el.onclick=e=>{e.stopPropagation();openAccount(el.dataset.acct);});
+    document.querySelectorAll("[data-order]").forEach(el=>el.onclick=e=>{e.stopPropagation();openOrder(el.dataset.order);});
+    document.querySelectorAll("[data-back-order]").forEach(el=>el.onclick=()=>show(lastList,titles[lastList][0],titles[lastList][1]));
+  }
+
+  const titles={dash:["Dashboard","Your book of business at a glance"],accounts:["Accounts","Every B2B account, pricing tier, and balance"],insights:["Insights","Customer-base analysis and segments"],pipeline:["Order pipeline","Track each order from quote to pickup"],"account-detail":["Account","Customer profile and history"],"order-detail":["Order","Order detail and fulfillment"]};
+  let lastList="dash";
+  const VIEWS=["dash","accounts","insights","pipeline","account-detail","order-detail"];
+  function show(v,title,sub){
+    VIEWS.forEach(x=>$("view-"+x).classList.toggle("hide",x!==v));
+    if(["dash","accounts","insights","pipeline"].includes(v)) lastList=v;
+    document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.classList.toggle("active",n.dataset.view===v));
+    document.querySelectorAll('#quickViews button').forEach(n=>n.classList.toggle("on",n.dataset.view===v));
+    $("viewTitle").textContent=title||titles[v][0]; $("viewSub").textContent=sub||titles[v][1];
+    document.querySelector(".content").scrollTop=0; window.scrollTo(0,0);
+    if(v==="accounts") renderAccounts();
+    if(v==="insights") renderInsights();
+    if(v==="pipeline") renderBoard();
+    if(v==="dash"){ topAccounts(); openOrders(); }
+    bindRows();
+  }
+  function setView(v){ show(v,titles[v][0],titles[v][1]); }
+  document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener("click",()=>setView(el.dataset.view)));
 
   /* init */
-  kpis(); topAccounts(); openOrders();
+  kpis(); setView("dash");
 })();
 </script>
 </body>
